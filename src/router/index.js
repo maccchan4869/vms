@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import Store from '../store'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Vacation from '../views/Employee/Vacation.vue'
@@ -26,12 +27,18 @@ const routes = [
   {
     path: '/employee/vacation',
     name: 'Vacation',
-    component: Vacation
+    component: Vacation,
+    beforeEnter: (to, from, next) => {
+      sendLogin(next);
+    }
   },
   {
     path: '/admin/user',
     name: 'user',
-    component: User
+    component: User,
+    beforeEnter: (to, from, next) => {
+      sendLogin(next);
+    }
   },
 ]
 
@@ -39,5 +46,14 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
+
+const sendLogin = (next) => {
+  const loginUser = Store.getters.getLoginUser;
+  if(!loginUser.uid) {
+    next({path: '/'});
+  } else {
+    next();
+  }
+}
 
 export default router

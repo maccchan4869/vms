@@ -32,13 +32,17 @@ export default {
   methods: {
     // ログイン
     async clickLogin() {
-      //this.$router.push('/admin/user');
       try {
         await this.$store.dispatch('login', {
           email: this.email,
           password: this.password
         });
-        this.$router.push('/employee/vacation');
+        const loginUser = this.$store.getters.getLoginUser;
+        if(loginUser.admin) {
+          this.$router.push('/admin/user');
+        } else {
+          this.$router.push('/employee/vacation');
+        }
       } catch (error) {
         this.errorMessage = 'ログインに失敗しました';
         console.error(error);

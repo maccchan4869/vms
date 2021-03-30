@@ -71,5 +71,10 @@ export default createStore({
     }
   },
   modules: {
+  },
+  getters: {
+    getLoginUser: state => {
+      return state.loginUser;
+    }
   }
 })
