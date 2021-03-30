@@ -1,8 +1,4 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
   <router-view/>
 </template>
 
@@ -15,16 +11,44 @@
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+.cell {
+  margin: 2px 0;
+  display: inline-block;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.cellTitle {
+  width: 180px;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.errorMessage {
+  color: red;
+  line-height: 15px;
+}
+
+.modalOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modalOverlay .modalWindow {
+  min-width: 50%;
+  height: 45%;
+  font-size: 20px;
+  border-radius: 4px;
+  background: #fff;
+  position: relative;
+  padding-top: 1%;
+}
+
+.modalOverlay .modalWindow .btn {
+  margin: 0 2rem;
 }
 </style>
