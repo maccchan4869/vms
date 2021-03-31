@@ -3,12 +3,12 @@
     <Header/>
     <div><label class="errorMessage">{{ errorMessage }}</label></div>
     <div>
-      <div>メールアドレス</div>
-      <div><input type="text" placeholder="E-mail" v-model="email"></div>
+      <div class="cell cellTitle">メールアドレス</div>
+      <div class="cell"><input type="text" placeholder="E-mail" v-model="email"></div>
     </div>
     <div>
-      <div>パスワード</div>
-      <div><input type="password" placeholder="Password" v-model="password"></div>
+      <div class="cell cellTitle">パスワード</div>
+      <div class="cell"><input type="password" placeholder="Password" v-model="password"></div>
     </div>
     <input type="button" class="btn btn-outline-primary" value="ログイン" @click="clickLogin">
   </div>
