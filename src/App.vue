@@ -11,6 +11,10 @@
   color: #2c3e50;
 }
 
+ul{
+  list-style: none;
+}
+
 .cell {
   margin: 2px 0;
   display: inline-block;

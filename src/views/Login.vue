@@ -38,9 +38,11 @@ export default {
           password: this.password
         });
         const loginUser = this.$store.getters.getLoginUser;
-        if(loginUser.admin) {
+        if (loginUser.admin) {
           this.$router.push('/admin/user');
         } else {
+          await this.$store.dispatch('getVacation');
+          await this.$store.dispatch('getVacationInfo');
           this.$router.push('/employee/vacation');
         }
       } catch (error) {

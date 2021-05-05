@@ -8,14 +8,29 @@ export default createStore({
       staffName: '',
       admin: false
     },
+    vacationInfo: {
+      applyStartDay: null,
+      applyEndDay: null,
+      vacationDays: 0,
+      remainingVacationDays: 0,
+    },
+    vacation: [],
+    expense: [],
     staffs: []
   },
   mutations: {
     commitLoginUser(state, val) {
       state.loginUser = val;
     },
+    commitVacationInfo(state, val) {
+      state.vacationInfo = val;
+    },
+    commitVacation(state, val) {
+      state.vacation = val;
+    },
     commitStaffs(state, val) {
-      state.loginUser = val;
+      state.staffs = val;
+      
     },
   },
   actions: {
@@ -68,6 +83,47 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
+    },
+
+    // 休暇情報を取得
+    async getVacationInfo({ commit }) {
+      try {
+        const uid = firebase.auth().currentUser.uid;
+        const infoRef = await firebase.firestore().collection('information').doc(uid).collection('year')
+          .orderBy('year', 'desc').limit(1).get();
+        infoRef.forEach(infoDoc => {
+          commit('commitVacationInfo', {
+            applyStartDay: infoDoc.get('applyStartDay').toDate(),
+            applyEndDay: infoDoc.get('applyEndDay').toDate(),
+            vacationDays: infoDoc.get('vacationDays'),
+            remainingVacationDays: infoDoc.get('remainingVacationDays')
+          });
+        });
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 休暇申請情報を取得
+    async getVacation({ commit }) {
+      try {
+        const uid = firebase.auth().currentUser.uid;
+        const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').get();
+        const vacation = [];
+        vacationRef.forEach(vacationDoc => {
+          vacation.push({
+            serialNo: vacationDoc.get('serialNo'),
+            applyStatusCd: vacationDoc.get('applyStatusCd'),
+            typeCd: vacationDoc.get('typeCd'),
+            startDatetime: vacationDoc.get('startDatetime').toDate(),
+            endDatetime: vacationDoc.get('endDatetime').toDate(),
+            memo: vacationDoc.get('memo'),
+          });
+        });
+        commit('commitVacation', vacation);
+      } catch (error) {
+        throw error.message;
+      }
     }
   },
   modules: {
@@ -75,6 +131,12 @@ export default createStore({
   getters: {
     getLoginUser: state => {
       return state.loginUser;
+    },
+    getVacation: state => {
+      return state.vacation;
+    },
+    getVacationInfo: state => {
+      return state.vacationInfo;
     }
   }
 })
