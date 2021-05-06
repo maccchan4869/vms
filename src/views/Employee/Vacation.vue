@@ -1,11 +1,11 @@
 <template>
-  <div class="Vacation">
+  <div class="Vacation container-fluid">
     <Header/>
     <div class="searchArea">
       <label>残休暇日数：{{ daysLeft }}</label>
       <input type="button" class="btn btn-primary" value="申請">
     </div>
-    <div class="resultArea">
+    <div class="resultArea row justify-content-center">
       <table>
         <thead>
           <tr>
