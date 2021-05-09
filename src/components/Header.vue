@@ -1,11 +1,19 @@
 <template>
   <div class="header">
-    <div class="div_logo div_header">
-      <img alt="company logo" class="img_logo" src="../assets/logo.jpg">
-    </div>
-    <div class="div_header" v-if="isLogin">
-      <input type="button" class="btn btn-danger" value="ログアウト" @click="clickLogout">
-    </div>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <img alt="company logo" class="img_logo" src="../assets/logo.jpg">
+        <div class="navbar-right">
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <div v-if="isLogin">
+                <input type="button" class="btn btn-danger" value="ログアウト" @click="clickLogout">
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
   </div>
 </template>
 
@@ -45,17 +53,15 @@ export default {
   height: 70px;
 }
 
-.div_header {
-  display: inline-block;
-}
-
-.div_logo {
-  margin-left: 2rem;
-  width: 30%;
+.navbar {
   height: 100%;
 }
 
-.div_logo .img_logo {
+.container {
+  height: 100%;
+}
+
+.img_logo {
   height: 100%;
 }
 </style>

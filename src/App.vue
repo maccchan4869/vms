@@ -7,26 +7,27 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+  font-size: 20px;
 }
 
 ul{
   list-style: none;
 }
 
-.cell {
-  margin: 2px 0;
-  display: inline-block;
+.row {
+  margin-top: 1rem;
+  padding: 0 10rem;
 }
 
 .cellTitle {
   width: 180px;
+  text-align: center;
 }
 
 .errorMessage {
   color: red;
-  line-height: 15px;
+  line-height: 20px;
 }
 
 .modalOverlay {

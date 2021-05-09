@@ -1,16 +1,20 @@
 <template>
-  <div class="login">
+  <div class="login container-fluid">
     <Header/>
-    <div><label class="errorMessage">{{ errorMessage }}</label></div>
-    <div>
-      <div class="cell cellTitle">メールアドレス</div>
-      <div class="cell"><input type="text" placeholder="E-mail" v-model="email"></div>
+    <div class="row justify-content-center">
+      <div><label class="errorMessage">{{ errorMessage }}</label></div>
     </div>
-    <div>
-      <div class="cell cellTitle">パスワード</div>
-      <div class="cell"><input type="password" placeholder="Password" v-model="password"></div>
+    <div class="row justify-content-center">
+      <div class="cellTitle">メールアドレス</div>
+      <div><input type="text" placeholder="E-mail" v-model="email"></div>
     </div>
-    <input type="button" class="btn btn-outline-primary" value="ログイン" @click="clickLogin">
+    <div class="row justify-content-center">
+      <div class="cellTitle">パスワード</div>
+      <div><input type="password" placeholder="Password" v-model="password"></div>
+    </div>
+    <div class="row justify-content-center">
+      <input type="button" class="btn btn-outline-primary" value="ログイン" @click="clickLogin">
+    </div>
   </div>
 </template>
 
