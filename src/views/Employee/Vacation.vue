@@ -1,10 +1,8 @@
 <template>
   <div class="Vacation container-fluid">
     <Header/>
-    <div class="row">
-      <div class="col-4">
-        <label>残休暇日数：{{ daysLeft }}</label>
-      </div>
+    <div class="row align-items-center">
+      <div class="col-4">残休暇日数：{{ daysLeft }}日</div>
       <div class="col-8 text-right">
         <input type="button" class="btn btn-primary" value="申請">
       </div>

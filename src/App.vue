@@ -45,7 +45,8 @@ ul{
 
 .modalOverlay .modalWindow {
   min-width: 50%;
-  height: 45%;
+  max-width: 50%;
+  height: 50%;
   font-size: 20px;
   border-radius: 4px;
   background: #fff;

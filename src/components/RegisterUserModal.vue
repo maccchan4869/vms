@@ -1,48 +1,40 @@
 <template>
 <div class="modalUser modalOverlay" @click.self="$emit('close')">
-  <div class="modalWindow">
+  <div class="modalWindow container-fluid">
     <div><label class="errorMessage">{{ errorMessage }}</label></div>
-    <div>
-      <div class="cell cellTitle">社員名</div>
-      <div class="cell"><input type="text" placeholder="staffName" v-model="staffName"></div>
+    <div class="row align-items-center justify-content-center">
+      <div class="cellTitle">社員名</div>
+      <div><input type="text" placeholder="StaffName" v-model="staffName"></div>
     </div>
-    <div>
-      <div class="cell cellTitle">メールアドレス</div>
-      <div class="cell"><input type="text" placeholder="E-mail" v-model="email"></div>
+    <div class="row align-items-center justify-content-center">
+      <div class="cellTitle">メールアドレス</div>
+      <div><input type="text" placeholder="E-mail" v-model="email"></div>
     </div>
-    <div>
-      <div class="cell cellTitle">入社年月日</div>
-      <div class="cell">
-        <select v-model="joiningDate.year" @change="getMaxDay">
-          <option v-for="yearOption in yearOptions" :value="yearOption" v-bind:key="yearOption">{{ yearOption }}</option>
-        </select>
-      </div><label>年</label>
-      <div class="cell">
-        <select v-model="joiningDate.month" @change="getMaxDay">
-          <option v-for="month in 12" :value="month" v-bind:key="month">{{ month }}</option>
-        </select>
-      </div><label>月</label>
-      <div class="cell">
-        <select v-model="joiningDate.day">
-          <option v-for="day in maxDay" :value="day" v-bind:key="day">{{ day }}</option>
-        </select>
-      </div><label>日</label>
+    <div class="row align-items-center justify-content-center">
+      <div class="cellTitle">入社年月日</div>
+      <select v-model="joiningDate.year" @change="getMaxDay">
+        <option v-for="yearOption in yearOptions" :value="yearOption" v-bind:key="yearOption">{{ yearOption }}</option>
+      </select>年
+      <select v-model="joiningDate.month" @change="getMaxDay">
+        <option v-for="month in 12" :value="month" v-bind:key="month">{{ month }}</option>
+      </select>月
+      <select v-model="joiningDate.day">
+        <option v-for="day in maxDay" :value="day" v-bind:key="day">{{ day }}</option>
+      </select>日
     </div>
-    <div>
-      <div class="cell cellTitle">パスワード</div>
-      <div class="cell"><input type="password" placeholder="Password" v-model="password"></div>
+    <div class="row align-items-center justify-content-center">
+      <div class="cellTitle">パスワード</div>
+      <div><input type="password" placeholder="Password" v-model="password"></div>
     </div>
-    <div>
-      <div class="cell cellTitle">権限</div>
-      <div class="cell">
-        <input type="radio" value="1" v-model="admin">
-          <label>管理者</label>
-          <input type="radio" value="0" v-model="admin">
-          <label>スタッフ</label>
-      </div>
+    <div class="row align-items-center justify-content-center">
+      <div class="cellTitle">権限</div>
+      <input type="radio" value="1" v-model="admin">管理者
+      <input type="radio" value="0" v-model="admin">スタッフ
     </div>
-    <input type="button" class="btn btn-primary" value="登録" @click="validationInputData">
-    <input type="button" class="btn btn-danger" value="キャンセル" @click="$emit('close')">
+    <div class="row align-items-center justify-content-center">
+      <input type="button" class="btn btn-primary" value="登録" @click="validationInputData">
+      <input type="button" class="btn btn-danger" value="キャンセル" @click="$emit('close')">
+    </div>
   </div>
 </div>
 </template>
@@ -95,10 +87,4 @@ export default {
 </script>
 
 <style scoped>
-.divBoxContainer {
-  display: table;
-}
-.divBox {
-  display: table-cell;
-}
 </style>
