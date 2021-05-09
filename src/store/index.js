@@ -124,6 +124,32 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
+    },
+
+    // 休暇申請
+    async applyVacation({ dispatch }, item) {
+      try {
+        const uid = firebase.auth().currentUser.uid;
+        let serialNo = 0;
+        const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo')
+          .orderBy('serialNo', 'desc').limit(1).get();
+          vacationRef.forEach(vacationDoc => {
+            serialNo = vacationDoc.get('serialNo');
+        });
+        serialNo += 1;
+        firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(serialNo)).set({
+          uid: uid,
+          serialNo: serialNo,
+          startDatetime: item.startDatetime,
+          endDatetime: item.endDatetime,
+          typeCd: item.typeCd,
+          applyStatusCd: item.applyStatusCd,
+          memo: item.memo
+        });
+        await dispatch('getVacation');
+      } catch (error) {
+        throw error.message;
+      }
     }
   },
   modules: {

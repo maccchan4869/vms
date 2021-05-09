@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="row justify-content-center common-padding">
-      <table class="table-hover table-striped table-bordered">
+      <table class="table-striped table-bordered">
         <thead>
           <tr>
             <td class="width-12 text-center">取得日（自）</td>
@@ -80,7 +80,15 @@ export default {
       this.isDispVacation = false;
     },
     // 休暇を申請
-    async applyVacation() {
+    async applyVacation(item) {
+      try {
+        await this.$store.dispatch('applyVacation', item);
+        this.vacation = this.$store.getters.getVacation;
+        this.errorMessage = '';
+      } catch (error) {
+        this.errorMessage = '登録に失敗しました';
+        console.error(error);
+      }
       this.closeVacationModal();
     }
   }
