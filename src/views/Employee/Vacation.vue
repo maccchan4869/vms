@@ -1,13 +1,13 @@
 <template>
   <div class="Vacation container-fluid">
     <Header/>
-    <div class="row align-items-center">
+    <div class="row align-items-center common-padding">
       <div class="col-4">残休暇日数：{{ daysLeft }}日</div>
       <div class="col-8 text-right">
-        <input type="button" class="btn btn-primary" value="申請">
+        <input type="button" class="btn btn-primary" value="申請" @click="openVacationModal()">
       </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center common-padding">
       <table class="table-hover table-striped table-bordered">
         <thead>
           <tr>
@@ -31,22 +31,28 @@
         </tbody>
       </table>
     </div>
+    <transition-group  name="modal">
+      <VacationAppModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></VacationAppModal>
+    </transition-group >
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue'
+import VacationAppModal from '@/components/VacationAppModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'vacation',
   components: {
-    Header
+    Header,
+    VacationAppModal
   },
   data () {
     return {
       daysLeft: 0,
-      vacation: []
+      vacation: [],
+      isDispVacation: false
     }
   },
   created() {
@@ -66,22 +72,19 @@ export default {
     },
     setTime(datetime) {
       return definition.setTime(datetime);
+    },
+    openVacationModal() {
+      this.isDispVacation = true;
+    },
+    closeVacationModal() {
+      this.isDispVacation = false;
+    },
+    // 休暇を申請
+    async applyVacation() {
+      this.closeVacationModal();
     }
   }
 }
 </script>
 
-<style scoped>
-.width-20 {
- width: 20rem;
-}
-
-.width-12 {
- width: 12rem;
-}
-
-.width-8 {
- width: 8rem;
-}
-</style>
 

@@ -11,11 +11,26 @@
   font-size: 20px;
 }
 
+/* =============================================
+HTML要素
+============================================= */
 ul{
   list-style: none;
 }
 
-.row {
+input[type="date"], 
+input[type="time"] { 
+  margin: 5px; 
+}
+
+input[type="button"]{ 
+  width: 100px; 
+}
+
+/* =============================================
+共通クラス
+============================================= */
+.common-padding {
   margin-top: 1rem;
   padding: 0 10rem;
 }
@@ -30,6 +45,21 @@ ul{
   line-height: 20px;
 }
 
+.width-8 {
+ width: 8rem;
+}
+
+.width-12 {
+ width: 12rem;
+}
+
+.width-20 {
+ width: 20rem;
+}
+
+/* =============================================
+モーダル共通クラス
+============================================= */
 .modalOverlay {
   display: flex;
   align-items: center;
