@@ -50,6 +50,10 @@
 export default {
   name: 'VacationAppModal',
   created() {
+    const today = new Date();
+    const strToday = `${today.getFullYear()}-${('0'+(today.getMonth() + 1)).slice(-2)}-${('0'+today.getDate()).slice(-2)}`;
+    this.startDate = strToday;
+    this.endDate = strToday;
   },
   data () {
     return {
@@ -71,10 +75,20 @@ export default {
   methods: {
     // 入力データチェック
     validationInputData() {
-      const startDatetime = new Date(Date.parse(this.startDate + ' ' + this.startTime));
-      const endDatetime = new Date(Date.parse(this.endDate + ' ' + this.endTime));
+      const startUnixTime = Date.parse(`${this.startDate} ${this.startTime}`);
+      const endUnixTime = Date.parse(`${this.endDate} ${this.endTime}`);
+      const startDatetime = new Date(startUnixTime);
+      const endDatetime = new Date(endUnixTime);
+      if(isNaN(startUnixTime) || isNaN(endUnixTime)) {
+        this.errorMessage = '日付の入力値が不正です';
+        return;
+      }
+      if(!this.startTime || !this.endTime) {
+        this.errorMessage = '時刻の入力値が不正です';
+        return;
+      }
       if(startDatetime > endDatetime) {
-        this.errorMessage = '入力値が不正です';
+        this.errorMessage = '開始時間と終了時間の順番に不備があります。';
         return;
       }
       this.$emit('apply', {
