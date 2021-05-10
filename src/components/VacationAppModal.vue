@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import definition from "@/helper/definition"
 export default {
   name: 'VacationAppModal',
   created() {
@@ -54,6 +55,7 @@ export default {
     const strToday = `${today.getFullYear()}-${('0'+(today.getMonth() + 1)).slice(-2)}-${('0'+today.getDate()).slice(-2)}`;
     this.startDate = strToday;
     this.endDate = strToday;
+    this.codeStatus = definition.getCodeStatus();
   },
   data () {
     return {
@@ -64,6 +66,7 @@ export default {
       endTime: '18:00',
       typeCd: '0',
       memo: '',
+      codeStatus: null,
       typeOptions: [
         {typeCd: '0', typeName: '有給休暇'},
         {typeCd: '1', typeName: '半休休暇'},
@@ -95,7 +98,7 @@ export default {
         startDatetime: startDatetime,
         endDatetime: endDatetime,
         typeCd: this.typeCd,
-        applyStatusCd: '0',
+        applyStatusCd: this.codeStatus.applying,
         memo: this.memo
       });
     }

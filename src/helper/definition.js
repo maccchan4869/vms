@@ -1,6 +1,8 @@
 const codeType = {
-  oneDay: '0',
-  halfDay: '1'
+  oneDay: {typeCd: '0', typeName: '有給休暇'},
+  halfDay: {typeCd: '1', typeName: '半休休暇'},
+  leaveEarly: {typeCd: '2', typeName: '早退'},
+  absence: {typeCd: '3', typeName: '欠勤'}
 };
 
 const codeStatus = {
@@ -17,12 +19,16 @@ const codeStatus = {
  */
 const setTypeName = (typeCd) => {
   switch (typeCd) {
-    case codeType.oneDay:
-      return '有給休暇';
-    case codeType.halfDay:
-      return '半日休暇';
+    case codeType.oneDay.typeCd:
+      return codeType.oneDay.typeName;
+    case codeType.halfDay.typeCd:
+      return codeType.halfDay.typeName;
+    case codeType.leaveEarly.typeCd:
+      return codeType.leaveEarly.typeName;
+    case codeType.absence.typeCd:
+      return codeType.absence.typeName;
     default:
-      return 'その他';
+      return '';
   }
 };
 
@@ -71,4 +77,18 @@ const setTime = (datetime) => {
   return format;
 };
 
-export default { setTypeName, setStatusName, setDate, setTime };
+/**
+ * 申請状態CDを取得
+ */
+ const getCodeStatus = () => {
+  return codeStatus;
+};
+
+/**
+ * 申請状態CDを取得
+ */
+ const getCodeType = () => {
+  return codeType;
+};
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType };

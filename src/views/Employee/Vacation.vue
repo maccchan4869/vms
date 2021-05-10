@@ -26,13 +26,14 @@
             <td class="text-center">{{ setTypeName(vacation.typeCd) }}</td>
             <td class="text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
             <td class="text-center">{{ vacation.memo }}</td>
-            <td class="text-center"><input type="button" class="btn btn-danger" value="取消"></td>
+            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal" v-if="vacation.applyStatusCd !== codeStatus.acquired"></td>
           </tr>
         </tbody>
       </table>
     </div>
     <transition-group  name="modal">
       <VacationAppModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></VacationAppModal>
+      <VacationCancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></VacationCancelModal>
     </transition-group >
   </div>
 </template>
@@ -40,25 +41,30 @@
 <script>
 import Header from '@/components/Header.vue'
 import VacationAppModal from '@/components/VacationAppModal.vue'
+import VacationCancelModal from '@/components/VacationCancelModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'vacation',
   components: {
     Header,
-    VacationAppModal
+    VacationAppModal,
+    VacationCancelModal
   },
   data () {
     return {
       daysLeft: 0,
       vacation: [],
-      isDispVacation: false
+      isDispVacation: false,
+      isDispCancel: false,
+      codeStatus: null
     }
   },
   created() {
     this.vacation = this.$store.getters.getVacation;
     const vacationInfo = this.$store.getters.getVacationInfo;
     this.daysLeft = vacationInfo.remainingVacationDays;
+    this.codeStatus = definition.getCodeStatus();
   },
   methods: {
     setTypeName(typeCd) {
@@ -73,11 +79,19 @@ export default {
     setTime(datetime) {
       return definition.setTime(datetime);
     },
+    // 申請モーダル
     openVacationModal() {
       this.isDispVacation = true;
     },
     closeVacationModal() {
       this.isDispVacation = false;
+    },
+    // キャンセルモーダル
+    openCancelModal() {
+      this.isDispCancel = true;
+    },
+    closeCancelModal() {
+      this.isDispCancel = false;
     },
     // 休暇を申請
     async applyVacation(item) {
