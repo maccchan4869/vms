@@ -56,6 +56,7 @@ export default {
     this.startDate = strToday;
     this.endDate = strToday;
     this.codeStatus = definition.getCodeStatus();
+    this.typeOptions = definition.getCodeType();
   },
   data () {
     return {
@@ -67,12 +68,7 @@ export default {
       typeCd: '0',
       memo: '',
       codeStatus: null,
-      typeOptions: [
-        {typeCd: '0', typeName: '有給休暇'},
-        {typeCd: '1', typeName: '半休休暇'},
-        {typeCd: '2', typeName: '早退'},
-        {typeCd: '3', typeName: '欠勤'},
-      ]
+      typeOptions: null
     }
   },
   methods: {
@@ -98,7 +94,7 @@ export default {
         startDatetime: startDatetime,
         endDatetime: endDatetime,
         typeCd: this.typeCd,
-        applyStatusCd: this.codeStatus.applying,
+        applyStatusCd: this.codeStatus.applying.typeCd,
         memo: this.memo
       });
     }
