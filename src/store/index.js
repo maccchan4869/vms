@@ -150,6 +150,17 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
+    },
+
+    // 休暇申請取消
+    async cancelVacation({ dispatch }, item) {
+      try {
+        const uid = firebase.auth().currentUser.uid;
+        await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(item.serialNo)).delete();
+        dispatch('getVacation');
+      } catch (error) {
+        throw error.message;
+      }
     }
   },
   modules: {

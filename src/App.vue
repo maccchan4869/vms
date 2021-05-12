@@ -14,7 +14,7 @@
 /* =============================================
 HTML要素
 ============================================= */
-ul{
+ul {
   list-style: none;
 }
 
@@ -23,7 +23,7 @@ input[type="time"] {
   margin: 5px; 
 }
 
-input[type="button"]{ 
+input[type="button"] { 
   width: 100px; 
 }
 
@@ -86,5 +86,9 @@ input[type="button"]{
 
 .modalOverlay .modalWindow .btn {
   margin: 0 2rem;
+}
+
+.modalOverlay .modalWindow-small {
+  height: 30% !important;
 }
 </style>

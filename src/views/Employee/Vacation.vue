@@ -26,7 +26,7 @@
             <td class="text-center">{{ setTypeName(vacation.typeCd) }}</td>
             <td class="text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
             <td class="text-center">{{ vacation.memo }}</td>
-            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal" v-if="vacation.applyStatusCd !== codeStatus.acquired"></td>
+            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal(vacation)" v-if="vacation.applyStatusCd !== codeStatus.acquired.typeCd"></td>
           </tr>
         </tbody>
       </table>
@@ -55,6 +55,7 @@ export default {
     return {
       daysLeft: 0,
       vacation: [],
+      cancelItem: null,
       isDispVacation: false,
       isDispCancel: false,
       codeStatus: null
@@ -87,11 +88,13 @@ export default {
       this.isDispVacation = false;
     },
     // キャンセルモーダル
-    openCancelModal() {
+    openCancelModal(item) {
       this.isDispCancel = true;
+      this.cancelItem = item;
     },
     closeCancelModal() {
       this.isDispCancel = false;
+      this.cancelItem = null;
     },
     // 休暇を申請
     async applyVacation(item) {
@@ -104,6 +107,18 @@ export default {
         console.error(error);
       }
       this.closeVacationModal();
+    },
+    // 休暇申請を取消
+    async cancelVacation() {
+      try {
+        await this.$store.dispatch('cancelVacation', this.cancelItem);
+        this.vacation = this.$store.getters.getVacation;
+        this.errorMessage = '';
+      } catch (error) {
+        this.errorMessage = '取消に失敗しました';
+        console.error(error);
+      }
+      this.closeCancelModal();
     }
   }
 }

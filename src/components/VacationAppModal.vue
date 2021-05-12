@@ -1,7 +1,7 @@
 <template>
 <div class="modalUser modalOverlay" @click.self="$emit('close')">
   <div class="modalWindow container-fluid">
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-5">
       <label class="errorMessage">{{ errorMessage }}</label>
     </div>
     <div class="row align-items-center justify-content-center">
@@ -87,7 +87,7 @@ export default {
         return;
       }
       if(startDatetime > endDatetime) {
-        this.errorMessage = '開始時間と終了時間の順番に不備があります。';
+        this.errorMessage = '開始時間と終了時間の順序に誤りがあります。';
         return;
       }
       this.$emit('apply', {
