@@ -74,9 +74,9 @@ input[type="button"] {
 }
 
 .modalOverlay .modalWindow {
-  min-width: 50%;
-  max-width: 50%;
-  height: 50%;
+  min-width: 800px;
+  max-width: 800px;
+  height: 400px;
   font-size: 20px;
   border-radius: 4px;
   background: #fff;
@@ -89,6 +89,8 @@ input[type="button"] {
 }
 
 .modalOverlay .modalWindow-small {
-  height: 30% !important;
+  height: 220px !important;
+  min-width: 400px !important;
+  max-width: 400px !important;
 }
 </style>

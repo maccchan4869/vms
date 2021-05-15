@@ -37,11 +37,11 @@
           </tr>
         </tbody>
       </table>
-      <div class="mt-4">
+    </div>
+    <div class="row align-items-center justify-content-center mt-4">
         <input type="button" class="btn btn-primary" value="申請" @click="validationInputData">
         <input type="button" class="btn btn-danger" value="キャンセル" @click="$emit('close')">
       </div>
-    </div>
   </div>
 </div>
 </template>

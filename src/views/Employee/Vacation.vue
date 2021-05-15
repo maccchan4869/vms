@@ -1,10 +1,14 @@
 <template>
   <div class="Vacation container-fluid">
     <Header/>
-    <div class="row align-items-center common-padding">
-      <div class="col-4">残休暇日数：{{ daysLeft }}日</div>
-      <div class="col-8 text-right">
-        <input type="button" class="btn btn-primary" value="申請" @click="openVacationModal()">
+    <div class="row common-padding">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">残休暇日数：{{ daysLeft }}日</div>
+          <div class="col-lg-8 text-right">
+            <input type="button" class="btn btn-primary" value="申請" @click="openVacationModal()">
+          </div>
+        </div>
       </div>
     </div>
     <div class="row justify-content-center common-padding">
