@@ -87,14 +87,14 @@ export default {
         return;
       }
       if(startDatetime > endDatetime) {
-        this.errorMessage = '開始時間と終了時間の順序に誤りがあります。';
+        this.errorMessage = '開始時間と終了時間の順序に誤りがあります';
         return;
       }
       this.$emit('apply', {
         startDatetime: startDatetime,
         endDatetime: endDatetime,
         typeCd: this.typeCd,
-        applyStatusCd: this.codeStatus.applying.typeCd,
+        applyStatusCd: this.codeStatus.applying.statusCd,
         memo: this.memo
       });
     }

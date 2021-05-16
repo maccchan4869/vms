@@ -6,6 +6,12 @@
         <div class="row">
           <div class="col-lg-4">残休暇日数：{{ daysLeft }}日</div>
           <div class="col-lg-8 text-right">
+            <select v-model="selectedYear" @change="searchVacation">
+              <option v-for="yearOption in yearOptions" :value="yearOption.value" v-bind:key="yearOption.value">{{ yearOption.dispValue }}</option>
+            </select>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="1" checked>開始日時</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="2">休暇種別</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="3">承認ステータス</label>
             <input type="button" class="btn btn-primary" value="申請" @click="openVacationModal()">
           </div>
         </div>
@@ -24,13 +30,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="vacation in vacation" v-bind:key="vacation.serialNo">
+          <tr v-for="vacation in dispVacation" v-bind:key="vacation.serialNo">
             <td class="text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
             <td class="text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
             <td class="text-center">{{ setTypeName(vacation.typeCd) }}</td>
             <td class="text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
             <td class="text-center">{{ vacation.memo }}</td>
-            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal(vacation)" v-if="vacation.applyStatusCd !== codeStatus.acquired.typeCd"></td>
+            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal(vacation)" v-if="vacation.applyStatusCd !== codeStatus.acquired.statusCd"></td>
           </tr>
         </tbody>
       </table>
@@ -59,14 +65,29 @@ export default {
     return {
       daysLeft: 0,
       vacation: [],
+      dispVacation: [],
       cancelItem: null,
       isDispVacation: false,
       isDispCancel: false,
-      codeStatus: null
+      codeStatus: null,
+      sortKey: '1',
+      vacationSortKey: {
+        startDay: '1',
+        typeCd: '2',
+        applyStatusCd: '3'
+      },
+      selectedYear: 2021,
+      yearOptions: [
+        {value: 2018, dispValue: '2018年度'},
+        {value: 2019, dispValue: '2019年度'},
+        {value: 2020, dispValue: '2020年度'},
+        {value: 2021, dispValue: '2021年度'},
+      ]
     }
   },
   created() {
     this.vacation = this.$store.getters.getVacation;
+    this.dispVacation = this.vacation;
     const vacationInfo = this.$store.getters.getVacationInfo;
     this.daysLeft = vacationInfo.remainingVacationDays;
     this.codeStatus = definition.getCodeStatus();
@@ -99,6 +120,37 @@ export default {
     closeCancelModal() {
       this.isDispCancel = false;
       this.cancelItem = null;
+    },
+    // ソート機能
+    sortVacation() {
+      switch (this.sortKey) {
+        case this.vacationSortKey.startDay:
+          this.dispVacation.sort( (a, b) => {
+            if(a.startDatetime > b.startDatetime) return -1;
+            if(a.startDatetime < b.startDatetime) return 1;
+          });
+          break;
+        case this.vacationSortKey.typeCd:
+          this.dispVacation.sort( (a, b) => {
+            if(a.typeCd > b.typeCd) return 1;
+            if(a.typeCd < b.typeCd) return -1;
+          });
+          break;
+        case this.vacationSortKey.applyStatusCd:
+          this.dispVacation.sort( (a, b) => {
+            if(a.applyStatusCd > b.applyStatusCd) return 1;
+            if(a.applyStatusCd < b.applyStatusCd) return -1;
+          });
+          break;
+      }
+    },
+    // 検索機能
+    searchVacation() {
+      const firstDay = new Date(this.selectedYear, 0, 1);
+      const finalDay = new Date(this.selectedYear + 1, 3, 1);
+      this.dispVacation = this.vacation.filter(value => 
+        value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
+      console.log(this.dispVacation);
     },
     // 休暇を申請
     async applyVacation(item) {

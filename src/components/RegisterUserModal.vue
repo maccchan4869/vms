@@ -2,15 +2,15 @@
 <div class="modalUser modalOverlay" @click.self="$emit('close')">
   <div class="modalWindow container-fluid">
     <div><label class="errorMessage">{{ errorMessage }}</label></div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-2">
       <div class="cellTitle">社員名</div>
       <div><input type="text" placeholder="StaffName" v-model="staffName"></div>
     </div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-2">
       <div class="cellTitle">メールアドレス</div>
       <div><input type="text" placeholder="E-mail" v-model="email"></div>
     </div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-2">
       <div class="cellTitle">入社年月日</div>
       <select v-model="joiningDate.year" @change="getMaxDay">
         <option v-for="yearOption in yearOptions" :value="yearOption" v-bind:key="yearOption">{{ yearOption }}</option>
@@ -22,16 +22,16 @@
         <option v-for="day in maxDay" :value="day" v-bind:key="day">{{ day }}</option>
       </select>日
     </div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-2">
       <div class="cellTitle">パスワード</div>
       <div><input type="password" placeholder="Password" v-model="password"></div>
     </div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-2">
       <div class="cellTitle">権限</div>
-      <input type="radio" value="1" v-model="admin">管理者
-      <input type="radio" value="0" v-model="admin">スタッフ
+      <label class="mr-2"><input class="mr-1" type="radio" value="1" v-model="admin">管理者</label>
+      <label><input class="mr-1" type="radio" value="0" v-model="admin">スタッフ</label>
     </div>
-    <div class="row align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center mt-3">
       <input type="button" class="btn btn-primary" value="登録" @click="validationInputData">
       <input type="button" class="btn btn-danger" value="キャンセル" @click="$emit('close')">
     </div>

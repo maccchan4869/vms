@@ -6,10 +6,10 @@ const codeType = {
 };
 
 const codeStatus = {
-  applying: {typeCd: '0', typeName: '申請中'},
-  approved: {typeCd: '1', typeName: '承認済み'},
-  rejected: {typeCd: '2', typeName: '却下'},
-  acquired: {typeCd: '3', typeName: '取得済み'},
+  applying: {statusCd: '0', statusName: '申請中'},
+  approved: {statusCd: '1', statusName: '承認済み'},
+  rejected: {statusCd: '2', statusName: '却下'},
+  acquired: {statusCd: '3', statusName: '取得済み'},
 };
 
 /**
@@ -39,14 +39,14 @@ const setTypeName = (typeCd) => {
  */
  const setStatusName = (statusCd) => {
   switch (statusCd) {
-    case codeStatus.applying.typeCd:
-      return codeStatus.applying.typeName;
-    case codeStatus.approved.typeCd:
-      return codeStatus.approved.typeName;
-    case codeStatus.rejected.typeCd:
-      return codeStatus.rejected.typeName;
-    case codeStatus.acquired.typeCd:
-      return codeStatus.acquired.typeName;
+    case codeStatus.applying.statusCd:
+      return codeStatus.applying.statusName;
+    case codeStatus.approved.statusCd:
+      return codeStatus.approved.statusName;
+    case codeStatus.rejected.statusCd:
+      return codeStatus.rejected.statusName;
+    case codeStatus.acquired.statusCd:
+      return codeStatus.acquired.statusName;
     default:
       return '';
   }
