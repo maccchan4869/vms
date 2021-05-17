@@ -18,28 +18,30 @@
       </div>
     </div>
     <div class="row justify-content-center common-padding">
-      <table class="table-striped table-bordered">
-        <thead>
-          <tr>
-            <td class="width-12 text-center">取得日（自）</td>
-            <td class="width-12 text-center">取得日（至）</td>
-            <td class="width-8 text-center">休暇種類</td>
-            <td class="width-8 text-center">承認状態</td>
-            <td class="width-20 text-center">メモ</td>
-            <td class="width-8 text-center">取消</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="vacation in dispVacation" v-bind:key="vacation.serialNo">
-            <td class="text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
-            <td class="text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
-            <td class="text-center">{{ setTypeName(vacation.typeCd) }}</td>
-            <td class="text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
-            <td class="text-center">{{ vacation.memo }}</td>
-            <td class="text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal(vacation)" v-if="vacation.applyStatusCd !== codeStatus.acquired.statusCd"></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="resultArea">
+        <table class="table-striped table-bordered">
+          <thead>
+            <tr>
+              <td class="width-12 text-center">取得日（自）</td>
+              <td class="width-12 text-center">取得日（至）</td>
+              <td class="width-8 text-center">休暇種類</td>
+              <td class="width-8 text-center">承認状態</td>
+              <td class="width-20 text-center">メモ</td>
+              <td class="width-8 text-center">取消</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="vacation in dispVacation" v-bind:key="vacation.serialNo">
+              <td class="width-12 text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
+              <td class="width-12 text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
+              <td class="width-8 text-center">{{ setTypeName(vacation.typeCd) }}</td>
+              <td class="width-8 text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
+              <td class="width-20 text-center">{{ vacation.memo }}</td>
+              <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="取消" @click="openCancelModal(vacation)" v-if="vacation.applyStatusCd !== codeStatus.acquired.statusCd"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <transition-group  name="modal">
       <VacationAppModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></VacationAppModal>
@@ -150,7 +152,6 @@ export default {
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       this.dispVacation = this.vacation.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
-      console.log(this.dispVacation);
     },
     // 休暇を申請
     async applyVacation(item) {
@@ -179,5 +180,3 @@ export default {
   }
 }
 </script>
-
-

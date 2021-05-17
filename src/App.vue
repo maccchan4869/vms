@@ -27,6 +27,15 @@ input[type="button"] {
   width: 100px; 
 }
 
+.resultArea thead, .resultArea tbody {
+  display:block;
+}
+
+.resultArea tbody {
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
 /* =============================================
 共通クラス
 ============================================= */
