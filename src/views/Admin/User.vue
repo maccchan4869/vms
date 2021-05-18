@@ -41,8 +41,6 @@
     </transition-group >
     </div>
   </div>
-
-  
 </template>
 
 <script>
