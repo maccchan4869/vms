@@ -29,13 +29,12 @@ export default createStore({
       state.vacation = val;
     },
     commitStaffs(state, val) {
-      state.staffs = val;
-      
+      state.staffs = val; 
     },
   },
   actions: {
     // ログイン
-    async login({ commit }, {email, password}) {
+    async login({ commit, dispatch }, {email, password}) {
       try {
         await firebase.auth().signInWithEmailAndPassword(email, password);
         const uid = firebase.auth().currentUser.uid;
@@ -43,15 +42,17 @@ export default createStore({
         commit('commitLoginUser', {
           uid: userDoc.get('uid'),
           staffName: userDoc.get('staffName'),
-          admin: userDoc.get('admin')
+          admin: userDoc.get('admin'),
+          daysLeft: userDoc.get('daysLeft')
         });
+        await dispatch('getStaffList', uid);
       } catch (error) {
         throw error.message;
       }
     },
 
     // 新規登録
-    async registerAccount({ commit }, item) {
+    async registerAccount({ dispatch }, item) {
       try {
         await firebase.auth().createUserWithEmailAndPassword(item.email, item.password);
         const uid = firebase.auth().currentUser.uid;
@@ -65,19 +66,33 @@ export default createStore({
           email: item.email,
           joiningDate: new Date(item.joiningDate.year, item.joiningDate.month, item.joiningDate.day),
           firstSupplyHolidays: new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()),
-          admin: item.admin
+          admin: item.admin,
+          daysLeft: 0
         });
+        await dispatch('getStaffList', uid);
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // スタッフ一覧を取得
+    async getStaffList( {commit}, {loginUid}) {
+      try {
         const staffs = [];
         const users = await firebase.firestore().collection('users').get();
         users.forEach((userDoc) => {
+          const uid = userDoc.get('uid');
+          if (uid === loginUid) return;
+          // 残有給休暇日数を取得
           staffs.push({
-            uid: userDoc.get('uid'), 
+            uid: uid,
             staffName: userDoc.get('staffName'), 
             email: userDoc.get('email'),
             joiningDate: userDoc.get('joiningDate').toDate(),
             firstSupplyHolidays: userDoc.get('firstSupplyHolidays').toDate(),
             admin: userDoc.get('admin'),
-          })
+            daysLeft: userDoc.get('daysLeft')
+          });
         });
         commit('commitStaffs', staffs);
       } catch (error) {
@@ -95,8 +110,7 @@ export default createStore({
           commit('commitVacationInfo', {
             applyStartDay: infoDoc.get('applyStartDay').toDate(),
             applyEndDay: infoDoc.get('applyEndDay').toDate(),
-            vacationDays: infoDoc.get('vacationDays'),
-            remainingVacationDays: infoDoc.get('remainingVacationDays')
+            supplyVacationDays: infoDoc.get('supplyVacationDays')
           });
         });
       } catch (error) {
@@ -174,6 +188,9 @@ export default createStore({
     },
     getVacationInfo: state => {
       return state.vacationInfo;
+    },
+    getStaffs: state => {
+      return state.staffs;
     }
   }
 })
