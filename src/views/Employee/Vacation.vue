@@ -90,8 +90,8 @@ export default {
   created() {
     this.vacation = this.$store.getters.getVacation;
     this.dispVacation = this.vacation;
-    const vacationInfo = this.$store.getters.getVacationInfo;
-    this.daysLeft = vacationInfo.remainingVacationDays;
+    const userInfo = this.$store.getters.getLoginUser;
+    this.daysLeft = userInfo.daysLeft;
     this.codeStatus = definition.getCodeStatus();
   },
   methods: {
