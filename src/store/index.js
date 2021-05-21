@@ -116,7 +116,7 @@ export default createStore({
     // 休暇情報を取得
     async getVacationInfo({ commit }) {
       try {
-        const uid = firebase.auth().currentUser.uid;
+        const uid = this.getters.getLoginUser.uid;
         const infoRef = await firebase.firestore().collection('information').doc(uid).collection('year')
           .orderBy('year', 'desc').limit(1).get();
         infoRef.forEach(infoDoc => {
@@ -134,7 +134,7 @@ export default createStore({
     // 休暇申請情報を取得
     async getVacation({ commit }) {
       try {
-        const uid = firebase.auth().currentUser.uid;
+        const uid = this.getters.getLoginUser.uid;
         const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').get();
         const vacation = [];
         vacationRef.forEach(vacationDoc => {
@@ -156,7 +156,7 @@ export default createStore({
     // 休暇申請
     async applyVacation({ dispatch }, item) {
       try {
-        const uid = firebase.auth().currentUser.uid;
+        const uid = this.getters.getLoginUser.uid;
         let serialNo = 0;
         const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo')
           .orderBy('serialNo', 'desc').limit(1).get();
@@ -182,7 +182,7 @@ export default createStore({
     // 休暇申請取消
     async cancelVacation({ dispatch }, item) {
       try {
-        const uid = firebase.auth().currentUser.uid;
+        const uid = this.getters.getLoginUser.uid;
         await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(item.serialNo)).delete();
         dispatch('getVacation');
       } catch (error) {
