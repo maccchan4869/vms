@@ -75,8 +75,21 @@ export default createStore({
       }
     },
 
+    // アカウント削除
+    async deleteAccount({ dispatch }, deleteUid) {
+      try {
+        // TODO：Authenticationの削除は手動でしか対応不可
+        const loginUid = this.getters.getLoginUser.uid;
+        await firebase.firestore().collection('vacation').doc(deleteUid).delete();
+        await firebase.firestore().collection('users').doc(deleteUid).delete();
+        await dispatch('getStaffList', loginUid);
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
     // スタッフ一覧を取得
-    async getStaffList( {commit}, {loginUid}) {
+    async getStaffList( {commit}, loginUid) {
       try {
         const staffs = [];
         const users = await firebase.firestore().collection('users').get();

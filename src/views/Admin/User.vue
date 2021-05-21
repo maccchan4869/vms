@@ -1,7 +1,9 @@
 <template>
   <div class="User container-fluid">
     <Header/>
-    <div><label class="errorMessage">{{ errorMessage }}</label></div>
+    <div class="row justify-content-center common-padding">
+      <div><label class="errorMessage">{{ errorMessage }}</label></div>
+    </div>
     <div class="row common-padding">
       <div class="container">
         <div class="row">
@@ -31,13 +33,14 @@
               <td class="width-12 text-center">{{ setDate(staff.joiningDate) }}</td>
               <td class="width-8 text-center">{{ setDaysLeft(staff) }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="編集"></td>
-              <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="削除"></td>
+              <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="削除" @click="openDeleteModal(staff)"></td>
             </tr>
           </tbody>
         </table>
       </div>
     <transition-group  name="modal">
       <RegisterUserModal @close="closeRegisterModal" @register="registerAccount" v-if="isDispRegister"></RegisterUserModal>
+      <DeleteUserModal @close="closeDeleteModal" @delete="deleteAccount" v-if="isDispDelete"></DeleteUserModal>
     </transition-group >
     </div>
   </div>
@@ -47,13 +50,15 @@
 <script>
 import Header from '@/components/Header.vue'
 import RegisterUserModal from '@/components/RegisterUserModal.vue'
+import DeleteUserModal from '@/components/DeleteUserModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'user',
   components: {
     Header,
-    RegisterUserModal
+    RegisterUserModal,
+    DeleteUserModal
   },
   created() {
     this.staffs = this.$store.getters.getStaffs;
@@ -61,8 +66,10 @@ export default {
   data () {
     return {
       staffs: [],
+      targetStaff: null,
       errorMessage: '',
-      isDispRegister: false
+      isDispRegister: false,
+      isDispDelete: false
     }
   },
   methods: {
@@ -71,6 +78,14 @@ export default {
     },
     closeRegisterModal() {
       this.isDispRegister = false;
+    },
+    openDeleteModal(staff) {
+      this.targetStaff = staff;
+      this.isDispDelete = true;
+    },
+    closeDeleteModal() {
+      this.targetStaff = null;
+      this.isDispDelete = false;
     },
     setDate(datetime) {
       return definition.setDate(datetime);
@@ -83,12 +98,25 @@ export default {
     async registerAccount(item) {
       try {
         await this.$store.dispatch('registerAccount', item);
+        this.staffs = this.$store.getters.getStaffs;
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '登録に失敗しました';
         console.error(error);
       }
       this.closeRegisterModal();
+    },
+    // アカウントを削除
+    async deleteAccount() {
+      try {
+        await this.$store.dispatch('deleteAccount', (this.targetStaff.uid));
+        this.staffs = this.$store.getters.getStaffs;
+        this.errorMessage = '';
+      } catch (error) {
+        this.errorMessage = '削除に失敗しました';
+        console.error(error);
+      }
+      this.closeDeleteModal();
     }
   }
 }
