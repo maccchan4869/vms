@@ -5,10 +5,23 @@
         <img alt="company logo" class="img_logo" src="../assets/logo.jpg">
         <div class="navbar-right">
           <ul class="nav navbar-nav">
-            <li class="nav-item">
-              <div v-if="isLogin">
-                <input type="button" class="btn btn-danger" value="ログアウト" @click="clickLogout">
-              </div>
+            <li class="nav-item mr-3" v-if="isAdmin">
+              <input type="button" class="btn btn-light" value="ユーザー一覧" @click="linkUserList">
+            </li>
+            <li class="nav-item mr-3" v-if="isAdmin">
+              <input type="button" class="btn btn-light" value="休暇一覧" @click="linkAdminVacation">
+            </li>
+            <li class="nav-item mr-3" v-if="isAdmin">
+              <input type="button" class="btn btn-light" value="経費一覧" @click="linkAdminExpenses">
+            </li>
+            <li class="nav-item mr-3" v-if="isStaff">
+              <input type="button" class="btn btn-light" value="休暇申請" @click="linkVacation">
+            </li>
+            <li class="nav-item mr-3" v-if="isStaff">
+              <input type="button" class="btn btn-light" value="経費申請" @click="linkExpenses">
+            </li>
+            <li class="nav-item" v-if="isLogin">
+              <input type="button" class="btn btn-danger" value="ログアウト" @click="clickLogout">
             </li>
           </ul>
         </div>
@@ -23,12 +36,16 @@ export default {
   name: 'Header',
   data () {
     return {
-      isLogin: false
+      isLogin: false,
+      isAdmin: false,
+      isStaff: false
     }
   },
   created() {
     const loginUser = this.$store.getters.getLoginUser;
     this.isLogin = loginUser.uid !== '';
+    this.isAdmin = loginUser.admin && this.isLogin;
+    this.isStaff = !loginUser.admin && this.isLogin;
   },
   methods: {
     // ログアウト
@@ -41,6 +58,26 @@ export default {
       } catch (error) {
         console.error(error.message);
       }
+    },
+    // ユーザー一覧へ遷移
+    linkUserList() {
+      this.$router.push('/Admin/User');
+    },
+    // 休暇管理へ遷移
+    linkAdminVacation() {
+      this.$router.push('/Admin/Vacation');
+    },
+    // 経費管理へ遷移
+    linkAdminExpenses() {
+      this.$router.push('/Admin/Expenses');
+    },
+    // 休暇申請へ遷移
+    linkVacation() {
+      this.$router.push('/Employee/Vacation');
+    },
+    // 経費申請へ遷移
+    linkExpenses() {
+      this.$router.push('/Employee/Expenses');
     },
   }
 }

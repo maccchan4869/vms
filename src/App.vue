@@ -24,8 +24,10 @@ input[type="time"] {
 }
 
 input[type="button"] { 
-  width: 100px; 
+  width: 100px;
+  cursor: pointer;
 }
+
 
 .resultArea thead, .resultArea tbody {
   display:block;
@@ -65,6 +67,11 @@ input[type="button"] {
 .width-20 {
  width: 20rem;
 }
+
+.btn-light {
+  width: 130px !important;
+}
+
 
 /* =============================================
 モーダル共通クラス

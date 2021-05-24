@@ -13,7 +13,7 @@
       <div><input type="password" placeholder="Password" v-model="password"></div>
     </div>
     <div class="row align-items-center justify-content-center common-padding">
-      <input type="button" class="btn btn-outline-primary" value="ログイン" @click="clickLogin">
+      <input type="button" class="btn btn-primary" value="ログイン" @click="clickLogin">
     </div>
   </div>
 </template>
