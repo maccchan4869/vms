@@ -39,7 +39,7 @@
               <td class="width-20 text-center">{{ staff.email }}</td>
               <td class="width-12 text-center">{{ setDate(staff.joiningDate) }}</td>
               <td class="width-8 text-center">{{ setDaysLeft(staff) }}</td>
-              <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="編集"></td>
+              <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="編集" @click="openEditModal(staff)"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="削除" @click="openDeleteModal(staff)"></td>
             </tr>
           </tbody>
@@ -48,6 +48,7 @@
     <transition-group  name="modal">
       <RegisterUserModal @close="closeRegisterModal" @register="registerAccount" v-if="isDispRegister"></RegisterUserModal>
       <DeleteUserModal @close="closeDeleteModal" @delete="deleteAccount" v-if="isDispDelete"></DeleteUserModal>
+      <EditUserModal :val="targetStaff" @close="closeEditModal" @edit="editAccount" v-if="isDispEdit"></EditUserModal>
     </transition-group >
     </div>
   </div>
@@ -58,6 +59,7 @@
 import Header from '@/components/Header.vue'
 import RegisterUserModal from '@/components/RegisterUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue'
+import EditUserModal from '@/components/EditUserModal.vue'
 import definition from "@/helper/definition"
 
 export default {
@@ -65,7 +67,8 @@ export default {
   components: {
     Header,
     RegisterUserModal,
-    DeleteUserModal
+    DeleteUserModal,
+    EditUserModal
   },
   created() {
     this.staffs = this.$store.getters.getStaffs;
@@ -89,7 +92,8 @@ export default {
       },
       errorMessage: '',
       isDispRegister: false,
-      isDispDelete: false
+      isDispDelete: false,
+      isDispEdit: false
     }
   },
   methods: {
@@ -106,6 +110,14 @@ export default {
     closeDeleteModal() {
       this.targetStaff = null;
       this.isDispDelete = false;
+    },
+    openEditModal(staff) {
+      this.targetStaff = staff;
+      this.isDispEdit = true;
+    },
+    closeEditModal() {
+      this.targetStaff = null;
+      this.isDispEdit = false;
     },
     setDate(datetime) {
       return definition.setDate(datetime);
@@ -170,6 +182,23 @@ export default {
         console.error(error);
       }
       this.closeDeleteModal();
+    },
+    // アカウントを編集
+    async editAccount(changedVal) {
+      try {
+        const changedDaysLeft = changedVal - this.targetStaff.daysLeft;
+        await this.$store.dispatch('editAccount', {
+          targetUid: this.targetStaff.uid,
+          changedDaysLeft: changedDaysLeft
+        });
+        this.staffs = this.$store.getters.getStaffs;
+        this.searchUser();
+        this.errorMessage = '';
+      } catch (error) {
+        this.errorMessage = '更新に失敗しました';
+        console.error(error);
+      }
+      this.closeEditModal();
     }
   }
 }

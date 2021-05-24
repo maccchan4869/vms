@@ -88,6 +88,20 @@ export default createStore({
       }
     },
 
+    // アカウント編集
+    async editAccount({ dispatch }, {targetUid, changedDaysLeft}){
+      const db = firebase.firestore();
+      const loginUid = this.getters.getLoginUser.uid;
+      try {
+        await db.collection('users').doc(targetUid).update({
+          daysLeft: firebase.firestore.FieldValue.increment(changedDaysLeft)
+        });
+        await dispatch('getStaffList', loginUid);
+      } catch (error) {
+        console.error(error.message);
+      }
+    },
+
     // スタッフ一覧を取得
     async getStaffList( {commit}, loginUid) {
       try {
