@@ -61,23 +61,23 @@ export default {
     },
     // ユーザー一覧へ遷移
     linkUserList() {
-      this.$router.push('/Admin/User');
+      this.$router.push('/admin/user');
     },
     // 休暇管理へ遷移
     linkAdminVacation() {
-      this.$router.push('/Admin/Vacation');
+      this.$router.push('/admin/vacation');
     },
     // 経費管理へ遷移
     linkAdminExpenses() {
-      this.$router.push('/Admin/Expenses');
+      this.$router.push('/admin/expenses');
     },
     // 休暇申請へ遷移
     linkVacation() {
-      this.$router.push('/Employee/Vacation');
+      this.$router.push('/employee/vacation');
     },
     // 経費申請へ遷移
     linkExpenses() {
-      this.$router.push('/Employee/Expenses');
+      this.$router.push('/employee/expenses');
     },
   }
 }
