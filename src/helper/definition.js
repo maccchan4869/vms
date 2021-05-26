@@ -80,15 +80,24 @@ const setTime = (datetime) => {
 /**
  * 申請状態CDを取得
  */
- const getCodeStatus = () => {
+const getCodeStatus = () => {
   return codeStatus;
 };
 
 /**
  * 申請状態CDを取得
  */
- const getCodeType = () => {
+const getCodeType = () => {
   return codeType;
 };
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType };
+/**
+ * 本年度を取得
+ */
+const getThisYear = () => {
+  const today = new Date();
+  today.setMonth(today.getMonth() - 3);
+  return today.getFullYear();
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear };

@@ -20,6 +20,7 @@
 
 <script>
 import Header from '@/components/Header.vue'
+import definition from "@/helper/definition"
 
 export default {
   name: 'login',
@@ -36,6 +37,7 @@ export default {
   methods: {
     // ログイン
     async clickLogin() {
+      const year = definition.getThisYear();
       try {
         await this.$store.dispatch('login', {
           email: this.email,
@@ -43,6 +45,7 @@ export default {
         });
         const loginUser = this.$store.getters.getLoginUser;
         if (loginUser.admin) {
+          await this.$store.dispatch('getVacationList', year);
           this.$router.push('/admin/user');
         } else {
           await this.$store.dispatch('getVacation');

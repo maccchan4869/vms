@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import firebase from 'firebase'
+import definition from "@/helper/definition"
 
 export default createStore({
   state: {
@@ -80,6 +81,12 @@ export default createStore({
       try {
         // TODO：Authenticationの削除は手動でしか対応不可
         const loginUid = this.getters.getLoginUser.uid;
+        const vacationRef = await firebase.firestore().collection('vacation').doc(deleteUid).collection('serialNo').get();
+        vacationRef.forEach(async vacationDoc => {
+          const serialNo = String(vacationDoc.get('serialNo'));
+          await firebase.firestore().collection('vacation').doc(deleteUid).collection('serialNo').doc(serialNo).delete();
+          await firebase.firestore().collection('vacation').doc(vacationDoc.get('vacationId')).delete();
+        });
         await firebase.firestore().collection('vacation').doc(deleteUid).delete();
         await firebase.firestore().collection('users').doc(deleteUid).delete();
         await dispatch('getStaffList', loginUid);
@@ -145,7 +152,7 @@ export default createStore({
       }
     },
 
-    // 休暇申請情報を取得
+    // 休暇申請情報を取得(スタッフの場合)
     async getVacation({ commit }) {
       try {
         const uid = this.getters.getLoginUser.uid;
@@ -153,6 +160,30 @@ export default createStore({
         const vacation = [];
         vacationRef.forEach(vacationDoc => {
           vacation.push({
+            serialNo: vacationDoc.get('serialNo'),
+            vacationId: vacationDoc.get('vacationId'),
+            applyStatusCd: vacationDoc.get('applyStatusCd'),
+            typeCd: vacationDoc.get('typeCd'),
+            startDatetime: vacationDoc.get('startDatetime').toDate(),
+            endDatetime: vacationDoc.get('endDatetime').toDate(),
+            memo: vacationDoc.get('memo'),
+          });
+        });
+        commit('commitVacation', vacation);
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 休暇申請情報を取得(管理者の場合)
+    async getVacationList({ commit }, year) {
+      try {
+        const vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).get();
+        const vacation = [];
+        vacationRef.forEach(vacationDoc => {
+          vacation.push({
+            uid: vacationDoc.get('uid'),
+            staffName: vacationDoc.get('staffName'),
             serialNo: vacationDoc.get('serialNo'),
             applyStatusCd: vacationDoc.get('applyStatusCd'),
             typeCd: vacationDoc.get('typeCd'),
@@ -170,24 +201,41 @@ export default createStore({
     // 休暇申請
     async applyVacation({ dispatch }, item) {
       try {
-        const uid = this.getters.getLoginUser.uid;
+        const user = this.getters.getLoginUser;
+        const thisYear = definition.getThisYear();
         let serialNo = 0;
-        const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo')
+        const vacationRef = await firebase.firestore().collection('vacation').doc(user.uid).collection('serialNo')
           .orderBy('serialNo', 'desc').limit(1).get();
-          vacationRef.forEach(vacationDoc => {
-            serialNo = vacationDoc.get('serialNo');
+        vacationRef.forEach(vacationDoc => {
+          serialNo = vacationDoc.get('serialNo');
         });
         serialNo += 1;
-        firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(serialNo)).set({
-          uid: uid,
+        const docRef = await firebase.firestore().collection('vacation').add({
+          uid: user.uid,
+          year: thisYear,
           serialNo: serialNo,
+          staffName: user.staffName,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
           typeCd: item.typeCd,
           applyStatusCd: item.applyStatusCd,
           memo: item.memo
         });
-        await dispatch('getVacation');
+        firebase.firestore().collection('vacation').doc(user.uid).collection('serialNo').doc(String(serialNo)).set({
+          uid: user.uid,
+          serialNo: serialNo,
+          vacationId: docRef.id,
+          startDatetime: item.startDatetime,
+          endDatetime: item.endDatetime,
+          typeCd: item.typeCd,
+          applyStatusCd: item.applyStatusCd,
+          memo: item.memo
+        });
+        if (user.admin) {
+          await dispatch('getVacationList', thisYear);
+        } else {
+          await dispatch('getVacation');
+        }
       } catch (error) {
         throw error.message;
       }
@@ -198,6 +246,7 @@ export default createStore({
       try {
         const uid = this.getters.getLoginUser.uid;
         await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(item.serialNo)).delete();
+        await firebase.firestore().collection('vacation').doc(item.vacationId).delete();
         dispatch('getVacation');
       } catch (error) {
         throw error.message;
