@@ -8,8 +8,11 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-right">
-            <select v-model="selectedYear">
+            <select v-model="selectedYear" class="mr-1">
               <option v-for="yearOption in yearOptions" :value="yearOption.value" v-bind:key="yearOption.value">{{ yearOption.dispValue }}</option>
+            </select>
+            <select v-model="selectedUid" class="mr-1">
+              <option v-for="staffOption in staffOptions" :value="staffOption.uid" v-bind:key="staffOption.uid">{{ staffOption.staffName }}</option>
             </select>
             <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="0" checked>申請中</label>
             <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="1">承認済み</label>
@@ -60,6 +63,8 @@ export default {
     Header
   },
   created() {
+    const staffs =  this.$store.getters.getStaffs;
+    this.staffOptions = definition.getStaffOptions(staffs);
     this.vacation = this.$store.getters.getVacation;
     this.dispVacation = this.vacation;
     this.codeStatus = definition.getCodeStatus();
@@ -80,6 +85,7 @@ export default {
         all: '4'
       },
       selectedUid: null,
+      staffOptions: [],
       selectedYear: 0,
       yearOptions: [],
       errorMessage: ''

@@ -112,4 +112,16 @@ const getThisYear = () => {
   return ret;
 }
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions };
+/**
+ * スタッフの選択肢を取得
+ */
+ const getStaffOptions = (staffs) => {
+  const ret = [];
+  ret.push({uid: null, staffName: '全て'});
+  staffs.forEach(staff => {
+    ret.push({uid: staff.uid, staffName: staff.staffName});
+  });
+  return ret;
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions };
