@@ -4,6 +4,23 @@
     <div class="row justify-content-center common-padding">
       <div><label class="errorMessage">{{ errorMessage }}</label></div>
     </div>
+    <div class="row common-padding">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-right">
+            <select v-model="selectedYear">
+              <option v-for="yearOption in yearOptions" :value="yearOption.value" v-bind:key="yearOption.value">{{ yearOption.dispValue }}</option>
+            </select>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="0" checked>申請中</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="1">承認済み</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="2">却下</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="3">取得済み</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="4">全て</label>
+            <input type="button" class="btn btn-primary" value="検索" @click="searchVacation">
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row justify-content-center common-padding">
       <div class="resultArea">
         <table class="table-striped table-bordered">
@@ -13,7 +30,6 @@
               <td class="width-12 text-center">取得日（自）</td>
               <td class="width-12 text-center">取得日（至）</td>
               <td class="width-8 text-center">休暇種類</td>
-              <td class="width-8 text-center">承認状態</td>
               <td class="width-8 text-center">承認</td>
               <td class="width-8 text-center">取消</td>
             </tr>
@@ -24,7 +40,6 @@
               <td class="width-12 text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
               <td class="width-12 text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
               <td class="width-8 text-center">{{ setTypeName(vacation.typeCd) }}</td>
-              <td class="width-8 text-center">{{ setStatusName(vacation.applyStatusCd) }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認" v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="却下" v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
             </tr>
@@ -48,12 +63,25 @@ export default {
     this.vacation = this.$store.getters.getVacation;
     this.dispVacation = this.vacation;
     this.codeStatus = definition.getCodeStatus();
+    this.selectedYear = definition.getThisYear();
+    this.yearOptions = definition.getYearOptions();
   },
   data () {
     return {
       vacation: [],
       dispVacation: [],
       codeStatus: null,
+      searchKey: '0',
+      vacationSearchKey: {
+        applying: '0',
+        approved: '1',
+        rejected: '2',
+        acquired: '3',
+        all: '4'
+      },
+      selectedUid: null,
+      selectedYear: 0,
+      yearOptions: [],
       errorMessage: ''
     }
   },
@@ -70,6 +98,15 @@ export default {
     setTime(datetime) {
       return definition.setTime(datetime);
     },
+    // 検索
+    async searchVacation() {
+      await this.$store.dispatch('getVacationList', {
+        year: this.selectedYear,
+        targetUid: this.selectedUid
+      });
+      this.vacation = this.$store.getters.getVacation;
+      this.dispVacation = this.vacation;
+    }
   }
 }
 </script>

@@ -9,9 +9,9 @@
             <select v-model="selectedYear" @change="searchVacation">
               <option v-for="yearOption in yearOptions" :value="yearOption.value" v-bind:key="yearOption.value">{{ yearOption.dispValue }}</option>
             </select>
-            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="1" checked>開始日時</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="2">休暇種別</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="3">承認ステータス</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="0" checked>開始日時</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="1">休暇種別</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortVacation" value="2">承認ステータス</label>
             <input type="button" class="btn btn-primary" value="申請" @click="openVacationModal()">
           </div>
         </div>
@@ -72,27 +72,23 @@ export default {
       isDispVacation: false,
       isDispCancel: false,
       codeStatus: null,
-      sortKey: '1',
+      sortKey: '0',
       vacationSortKey: {
-        startDay: '1',
-        typeCd: '2',
-        applyStatusCd: '3'
+        startDay: '0',
+        typeCd: '1',
+        applyStatusCd: '2'
       },
-      selectedYear: 2021,
-      yearOptions: [
-        {value: 2018, dispValue: '2018年度'},
-        {value: 2019, dispValue: '2019年度'},
-        {value: 2020, dispValue: '2020年度'},
-        {value: 2021, dispValue: '2021年度'},
-      ]
+      selectedYear: 0,
+      yearOptions: [],
     }
   },
   created() {
     this.vacation = this.$store.getters.getVacation;
     this.dispVacation = this.vacation;
-    const userInfo = this.$store.getters.getLoginUser;
-    this.daysLeft = userInfo.daysLeft;
+    this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
     this.codeStatus = definition.getCodeStatus();
+    this.selectedYear = definition.getThisYear();
+    this.yearOptions = definition.getYearOptions();
   },
   methods: {
     setTypeName(typeCd) {

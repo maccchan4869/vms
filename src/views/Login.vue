@@ -45,7 +45,10 @@ export default {
         });
         const loginUser = this.$store.getters.getLoginUser;
         if (loginUser.admin) {
-          await this.$store.dispatch('getVacationList', year);
+          await this.$store.dispatch('getVacationList', {
+            year: year,
+            targetUid: null
+          });
           this.$router.push('/admin/user');
         } else {
           await this.$store.dispatch('getVacation');

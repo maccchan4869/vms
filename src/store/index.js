@@ -176,9 +176,14 @@ export default createStore({
     },
 
     // 休暇申請情報を取得(管理者の場合)
-    async getVacationList({ commit }, year) {
+    async getVacationList({ commit }, {year, targetUid}) {
       try {
-        const vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).get();
+        let vacationRef = null;
+        if (targetUid) {
+          vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).where("uid", "==", targetUid).orderBy('startDatetime').get();
+        } else {
+          vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).orderBy('startDatetime').get();
+        }
         const vacation = [];
         vacationRef.forEach(vacationDoc => {
           vacation.push({
@@ -231,11 +236,7 @@ export default createStore({
           applyStatusCd: item.applyStatusCd,
           memo: item.memo
         });
-        if (user.admin) {
-          await dispatch('getVacationList', thisYear);
-        } else {
-          await dispatch('getVacation');
-        }
+        await dispatch('getVacation');
       } catch (error) {
         throw error.message;
       }

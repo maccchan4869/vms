@@ -100,4 +100,16 @@ const getThisYear = () => {
   return today.getFullYear();
 }
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear };
+/**
+ * 年度の選択肢を取得
+ */
+ const getYearOptions = () => {
+  const ret = [];
+  const thisYear = getThisYear();
+  for(let i = 2018; i <= thisYear; i++) {
+    ret.push({value: i, dispValue: `${i}年度`});
+  }
+  return ret;
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions };
