@@ -81,10 +81,9 @@ export default createStore({
       try {
         // TODO：Authenticationの削除は手動でしか対応不可
         const loginUid = this.getters.getLoginUser.uid;
-        const vacationRef = await firebase.firestore().collection('vacation').doc(deleteUid).collection('serialNo').get();
+        const vacationRef = await firebase.firestore().collection('vacation').doc(deleteUid).collection('vacationId').get();
         vacationRef.forEach(async vacationDoc => {
-          const serialNo = String(vacationDoc.get('serialNo'));
-          await firebase.firestore().collection('vacation').doc(deleteUid).collection('serialNo').doc(serialNo).delete();
+          await firebase.firestore().collection('vacation').doc(deleteUid).collection('vacationId').doc(vacationDoc.get('vacationId')).delete();
           await firebase.firestore().collection('vacation').doc(vacationDoc.get('vacationId')).delete();
         });
         await firebase.firestore().collection('vacation').doc(deleteUid).delete();
@@ -156,11 +155,10 @@ export default createStore({
     async getVacation({ commit }) {
       try {
         const uid = this.getters.getLoginUser.uid;
-        const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').get();
+        const vacationRef = await firebase.firestore().collection('vacation').doc(uid).collection('vacationId').get();
         const vacation = [];
         vacationRef.forEach(vacationDoc => {
           vacation.push({
-            serialNo: vacationDoc.get('serialNo'),
             vacationId: vacationDoc.get('vacationId'),
             applyStatusCd: vacationDoc.get('applyStatusCd'),
             typeCd: vacationDoc.get('typeCd'),
@@ -189,7 +187,6 @@ export default createStore({
           vacation.push({
             uid: vacationDoc.get('uid'),
             staffName: vacationDoc.get('staffName'),
-            serialNo: vacationDoc.get('serialNo'),
             applyStatusCd: vacationDoc.get('applyStatusCd'),
             typeCd: vacationDoc.get('typeCd'),
             startDatetime: vacationDoc.get('startDatetime').toDate(),
@@ -208,17 +205,9 @@ export default createStore({
       try {
         const user = this.getters.getLoginUser;
         const thisYear = definition.getThisYear();
-        let serialNo = 0;
-        const vacationRef = await firebase.firestore().collection('vacation').doc(user.uid).collection('serialNo')
-          .orderBy('serialNo', 'desc').limit(1).get();
-        vacationRef.forEach(vacationDoc => {
-          serialNo = vacationDoc.get('serialNo');
-        });
-        serialNo += 1;
         const docRef = await firebase.firestore().collection('vacation').add({
           uid: user.uid,
           year: thisYear,
-          serialNo: serialNo,
           staffName: user.staffName,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
@@ -226,9 +215,8 @@ export default createStore({
           applyStatusCd: item.applyStatusCd,
           memo: item.memo
         });
-        firebase.firestore().collection('vacation').doc(user.uid).collection('serialNo').doc(String(serialNo)).set({
+        firebase.firestore().collection('vacation').doc(user.uid).collection('vacationId').doc(docRef.id).set({
           uid: user.uid,
-          serialNo: serialNo,
           vacationId: docRef.id,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
@@ -246,7 +234,7 @@ export default createStore({
     async cancelVacation({ dispatch }, item) {
       try {
         const uid = this.getters.getLoginUser.uid;
-        await firebase.firestore().collection('vacation').doc(uid).collection('serialNo').doc(String(item.serialNo)).delete();
+        await firebase.firestore().collection('vacation').doc(uid).collection('vacationId').doc(String(item.vacationId)).delete();
         await firebase.firestore().collection('vacation').doc(item.vacationId).delete();
         dispatch('getVacation');
       } catch (error) {

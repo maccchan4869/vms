@@ -31,7 +31,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="vacation in dispVacation" v-bind:key="vacation.serialNo">
+            <tr v-for="vacation in dispVacation" v-bind:key="vacation.vacationId">
               <td class="width-12 text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
               <td class="width-12 text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
               <td class="width-8 text-center">{{ setTypeName(vacation.typeCd) }}</td>
