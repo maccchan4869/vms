@@ -49,7 +49,7 @@
 <script>
 import definition from "@/helper/definition"
 export default {
-  name: 'VacationAppModal',
+  name: 'AppVacationModal',
   created() {
     const today = new Date();
     const strToday = `${today.getFullYear()}-${('0'+(today.getMonth() + 1)).slice(-2)}-${('0'+today.getDate()).slice(-2)}`;

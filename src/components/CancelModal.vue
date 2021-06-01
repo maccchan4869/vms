@@ -16,6 +16,6 @@
 
 <script>
 export default {
-  name: 'VacationCancelModal',
+  name: 'cancelModal',
 }
 </script>

@@ -44,24 +44,24 @@
       </div>
     </div>
     <transition-group  name="modal">
-      <VacationAppModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></VacationAppModal>
-      <VacationCancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></VacationCancelModal>
+      <AppVacationModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></AppVacationModal>
+      <CancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></CancelModal>
     </transition-group >
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue'
-import VacationAppModal from '@/components/VacationAppModal.vue'
-import VacationCancelModal from '@/components/VacationCancelModal.vue'
+import AppVacationModal from '@/components/AppVacationModal.vue'
+import CancelModal from '@/components/CancelModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'vacation',
   components: {
     Header,
-    VacationAppModal,
-    VacationCancelModal
+    AppVacationModal,
+    CancelModal
   },
   data () {
     return {
