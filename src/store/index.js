@@ -186,6 +186,7 @@ export default createStore({
         vacationRef.forEach(vacationDoc => {
           vacation.push({
             uid: vacationDoc.get('uid'),
+            vacationId: vacationDoc.get('vacationId'),
             staffName: vacationDoc.get('staffName'),
             applyStatusCd: vacationDoc.get('applyStatusCd'),
             typeCd: vacationDoc.get('typeCd'),
@@ -205,24 +206,28 @@ export default createStore({
       try {
         const user = this.getters.getLoginUser;
         const thisYear = definition.getThisYear();
-        const docRef = await firebase.firestore().collection('vacation').add({
+        const docRef = await firebase.firestore().collection('vacation').add({});
+        await firebase.firestore().collection('vacation').doc(docRef.id).set({
           uid: user.uid,
+          vacationId: docRef.id,
           year: thisYear,
           staffName: user.staffName,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
           typeCd: item.typeCd,
           applyStatusCd: item.applyStatusCd,
-          memo: item.memo
+          memo: item.memo,
+          reason: ''
         });
-        firebase.firestore().collection('vacation').doc(user.uid).collection('vacationId').doc(docRef.id).set({
+        await firebase.firestore().collection('vacation').doc(user.uid).collection('vacationId').doc(docRef.id).set({
           uid: user.uid,
           vacationId: docRef.id,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
           typeCd: item.typeCd,
           applyStatusCd: item.applyStatusCd,
-          memo: item.memo
+          memo: item.memo,
+          reason: ''
         });
         await dispatch('getVacation');
       } catch (error) {
@@ -234,8 +239,26 @@ export default createStore({
     async cancelVacation({ dispatch }, item) {
       try {
         const uid = this.getters.getLoginUser.uid;
-        await firebase.firestore().collection('vacation').doc(uid).collection('vacationId').doc(String(item.vacationId)).delete();
+        await firebase.firestore().collection('vacation').doc(uid).collection('vacationId').doc(item.vacationId).delete();
         await firebase.firestore().collection('vacation').doc(item.vacationId).delete();
+        dispatch('getVacation');
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 休暇申請承認,却下
+    async changeApplyStatusCd({ dispatch }, {targetUid, vacationId, statusCd, reason}) {
+      try {
+        const db = firebase.firestore();
+        const batch = db.batch();
+        const vacRef = db.collection('vacation').doc(targetUid).collection('vacationId').doc(vacationId);
+        const vacListRef = firebase.firestore().collection('vacation').doc(vacationId);
+        batch.update(vacRef, {"applyStatusCd": statusCd});
+        batch.update(vacRef, {"reason": reason});
+        batch.update(vacListRef, {"applyStatusCd": statusCd});
+        batch.update(vacListRef, {"reason": reason});
+        await batch.commit();
         dispatch('getVacation');
       } catch (error) {
         throw error.message;

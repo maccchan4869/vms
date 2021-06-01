@@ -34,7 +34,7 @@
               <td class="width-12 text-center">取得日（至）</td>
               <td class="width-8 text-center">休暇種類</td>
               <td class="width-8 text-center">承認</td>
-              <td class="width-8 text-center">取消</td>
+              <td class="width-8 text-center">詳細</td>
             </tr>
           </thead>
           <tbody>
@@ -43,24 +43,33 @@
               <td class="width-12 text-center">{{ setDate(vacation.startDatetime) }}<br>{{ setTime(vacation.startDatetime) }}</td>
               <td class="width-12 text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
               <td class="width-8 text-center">{{ setTypeName(vacation.typeCd) }}</td>
-              <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認" v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
-              <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="却下" v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
+              <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認" 
+                @click="changeApplyStatusCd(vacation, codeStatus.approved.statusCd)"
+                v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
+              <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
+                @click="openDetailModal(vacation)"
+                v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    <transition-group  name="modal">
+      <VacationDetailModal :val="targetVacation" @close="closeDetailModal" @approve="approveVacation" @reject="rejectVacation" v-if="isDispDetail"></VacationDetailModal>
+    </transition-group >
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue'
+import VacationDetailModal from '@/components/VacationDetailModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'Vacation',
   components: {
-    Header
+    Header,
+    VacationDetailModal
   },
   created() {
     const staffs =  this.$store.getters.getStaffs;
@@ -75,6 +84,7 @@ export default {
     return {
       vacation: [],
       dispVacation: [],
+      targetVacation: null,
       codeStatus: null,
       searchKey: '0',
       vacationSearchKey: {
@@ -88,6 +98,7 @@ export default {
       staffOptions: [],
       selectedYear: 0,
       yearOptions: [],
+      isDispDetail: false,
       errorMessage: ''
     }
   },
@@ -104,6 +115,20 @@ export default {
     setTime(datetime) {
       return definition.setTime(datetime);
     },
+    openDetailModal(vacation) {
+      this.targetVacation = vacation;
+      this.isDispDetail = true;
+    },
+    closeDetailModal() {
+      this.targetVacation = null;
+      this.isDispDetail = false;
+    },
+    approveVacation() {
+      this.changeApplyStatusCd(this.targetVacation, this.codeStatus.approved.statusCd, '');
+    },
+    rejectVacation(param) {
+      this.changeApplyStatusCd(this.targetVacation, this.codeStatus.rejected.statusCd, param.reason);
+    },
     // 検索
     async searchVacation() {
       await this.$store.dispatch('getVacationList', {
@@ -111,7 +136,19 @@ export default {
         targetUid: this.selectedUid
       });
       this.vacation = this.$store.getters.getVacation;
+      this.dispVacation = this.vacation.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
+    },
+    // 承認,却下
+    async changeApplyStatusCd(vacation, statusCd, reason) {
+      await this.$store.dispatch('changeApplyStatusCd', {
+        targetUid: vacation.uid,
+        vacationId: vacation.vacationId,
+        statusCd: statusCd,
+        reason: reason
+      });
+      this.vacation = this.$store.getters.getVacation;
       this.dispVacation = this.vacation;
+      this.closeDetailModal();
     }
   }
 }

@@ -114,6 +114,7 @@ const getThisYear = () => {
 
 /**
  * スタッフの選択肢を取得
+ * @param {object} staffs スタッフ情報
  */
  const getStaffOptions = (staffs) => {
   const ret = [];
@@ -124,4 +125,22 @@ const getThisYear = () => {
   return ret;
 }
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions };
+/**
+ * 休暇の取得日数を取得
+ * @param {datetime} startDatetime 開始時刻
+ * @param {datetime} endDatetime   終了時刻
+ */
+ const getVacationDays = (startDatetime, endDatetime) => {
+  const oneDay = 1;
+  const halfDay = 0.5;
+  let diffDay = endDatetime.getTime() - startDatetime.getTime();
+  diffDay = Math.floor(diffDay / 86400000);
+  // 日跨ぎ申請を考慮するため、終了時刻に日付を合わせる
+  startDatetime.setDate(startDatetime.getDate() + diffDay);
+  let diffTime = endDatetime.getTime() - startDatetime.getTime();
+  // 1日の勤労時間（8時間）で除算し、休暇申請日数を求める
+  diffTime = Math.floor(diffTime / 28800000);
+  return (diffTime === 0 ? diffDay + halfDay : diffDay + oneDay);
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions, getVacationDays };
