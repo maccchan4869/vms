@@ -49,6 +49,7 @@ export default {
             year: year,
             targetUid: null
           });
+          await this.$store.dispatch('getExpensesList');
           this.$router.push('/admin/user');
         } else {
           await this.$store.dispatch('getVacation');

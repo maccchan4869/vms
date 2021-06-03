@@ -74,11 +74,10 @@ export default {
   created() {
     const staffs =  this.$store.getters.getStaffs;
     this.staffOptions = definition.getStaffOptions(staffs);
-    this.vacation = this.$store.getters.getVacation;
-    this.dispVacation = this.vacation;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
     this.yearOptions = definition.getYearOptions();
+    this.searchVacation();
   },
   data () {
     return {

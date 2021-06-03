@@ -289,7 +289,6 @@ export default createStore({
     async applyExpenses({ dispatch }, item) {
       try {
         const user = this.getters.getLoginUser;
-        const thisYear = definition.getThisYear();
         const docRef = await firebase.firestore().collection('expenses').add({});
         // firestrageへ登録
         const imagesRef = firebase.storage().ref().child(`images/${user.uid}/${docRef.id}.jpg`);
@@ -298,7 +297,7 @@ export default createStore({
         await firebase.firestore().collection('expenses').doc(docRef.id).set({
           uid: user.uid,
           expensesId: docRef.id,
-          year: thisYear,
+          staffName: user.staffName,
           useDate: item.useDate,
           money: item.money,
           applyStatusCd: item.applyStatusCd,
@@ -342,6 +341,28 @@ export default createStore({
         expensesRef.forEach(expensesDoc => {
           expenses.push({
             expensesId: expensesDoc.get('expensesId'),
+            useDate: expensesDoc.get('useDate'),
+            money: expensesDoc.get('money'),
+            applyStatusCd: expensesDoc.get('applyStatusCd'),
+            memo: expensesDoc.get('memo')
+          });
+        });
+        commit('commitExpenses', expenses);
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 経費申請情報を取得(管理者の場合)
+    async getExpensesList({ commit }) {
+      try {
+        const expensesRef = await firebase.firestore().collection('expenses').get();
+        const expenses = [];
+        expensesRef.forEach(expensesDoc => {
+          expenses.push({
+            uid: expensesDoc.get('uid'),
+            expensesId: expensesDoc.get('expensesId'),
+            staffName: expensesDoc.get('staffName'),
             useDate: expensesDoc.get('useDate'),
             money: expensesDoc.get('money'),
             applyStatusCd: expensesDoc.get('applyStatusCd'),
