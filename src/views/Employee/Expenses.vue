@@ -113,7 +113,7 @@ export default {
       const firstDay = new Date(this.selectedYear, 0, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       this.dispExpenses = this.expenses.filter(value => 
-        value.useDate.getTime() >= firstDay.getTime() && value.useDate.getTime() < finalDay.getTime());
+        new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
     },
     // 経費申請
     async applyExpenses(param) {
