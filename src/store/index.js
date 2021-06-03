@@ -16,7 +16,7 @@ export default createStore({
       remainingVacationDays: 0,
     },
     vacation: [],
-    expense: [],
+    expenses: [],
     staffs: []
   },
   mutations: {
@@ -31,6 +31,9 @@ export default createStore({
     },
     commitStaffs(state, val) {
       state.staffs = val; 
+    },
+    commitExpenses(state, val) {
+      state.expenses = val; 
     },
   },
   actions: {
@@ -78,16 +81,33 @@ export default createStore({
 
     // アカウント削除
     async deleteAccount({ dispatch }, deleteUid) {
+      // TODO：Authenticationの削除は手動でしか対応不可
       try {
-        // TODO：Authenticationの削除は手動でしか対応不可
+        const db = firebase.firestore();
         const loginUid = this.getters.getLoginUser.uid;
-        const vacationRef = await firebase.firestore().collection('vacation').doc(deleteUid).collection('vacationId').get();
+
+        // 休暇申請情報削除
+        const vacationRef = await db.collection('vacation').doc(deleteUid).collection('vacationId').get();
         vacationRef.forEach(async vacationDoc => {
-          await firebase.firestore().collection('vacation').doc(deleteUid).collection('vacationId').doc(vacationDoc.get('vacationId')).delete();
-          await firebase.firestore().collection('vacation').doc(vacationDoc.get('vacationId')).delete();
+          const vacationId = vacationDoc.get('vacationId');
+          await db.collection('vacation').doc(deleteUid).collection('vacationId').doc(vacationId).delete();
+          await db.collection('vacation').doc(vacationId).delete();
         });
-        await firebase.firestore().collection('vacation').doc(deleteUid).delete();
-        await firebase.firestore().collection('users').doc(deleteUid).delete();
+        await db.collection('vacation').doc(deleteUid).delete();
+
+        // 経費申請情報削除
+        const expensesRef = await db.collection('expenses').doc(deleteUid).collection('expensesId').get();
+        expensesRef.forEach(async expensesDoc => {
+          const expensesId = expensesDoc.get('expensesId');
+          await db.collection('expenses').doc(deleteUid).collection('expensesId').doc(expensesId).delete();
+          await db.collection('expenses').doc(expensesId).delete();
+          await firebase.storage().ref().child(`images/${deleteUid}/${expensesId}.jpg`).delete();
+        });
+        await db.collection('expenses').doc(deleteUid).delete();
+
+        // ユーザー情報削除
+        await db.collection('users').doc(deleteUid).delete();
+
         await dispatch('getStaffList', loginUid);
       } catch (error) {
         throw error.message;
@@ -263,6 +283,75 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
+    },
+
+    // 経費申請
+    async applyExpenses({ dispatch }, item) {
+      try {
+        const user = this.getters.getLoginUser;
+        const thisYear = definition.getThisYear();
+        const docRef = await firebase.firestore().collection('expenses').add({});
+        // firestrageへ登録
+        const imagesRef = firebase.storage().ref().child(`images/${user.uid}/${docRef.id}.jpg`);
+        await imagesRef.putString(item.image.substring(23), 'base64');
+        // firestoreへ登録
+        await firebase.firestore().collection('expenses').doc(docRef.id).set({
+          uid: user.uid,
+          expensesId: docRef.id,
+          year: thisYear,
+          useDate: item.useDate,
+          money: item.money,
+          applyStatusCd: item.applyStatusCd,
+          memo: item.memo,
+          reason: ''
+        });
+        await firebase.firestore().collection('expenses').doc(user.uid).collection('expensesId').doc(docRef.id).set({
+          uid: user.uid,
+          expensesId: docRef.id,
+          useDate: item.useDate,
+          money: item.money,
+          applyStatusCd: item.applyStatusCd,
+          memo: item.memo,
+          reason: ''
+        });
+        await dispatch('getExpenses');
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 経費申請取消
+    async cancelExpenses({ dispatch }, param) {
+      try {
+        const uid = this.getters.getLoginUser.uid;
+        await firebase.storage().ref().child(`images/${uid}/${param.expensesId}.jpg`).delete();
+        await firebase.firestore().collection('expenses').doc(uid).collection('expensesId').doc(param.expensesId).delete();
+        await firebase.firestore().collection('expenses').doc(param.expensesId).delete();
+        dispatch('getExpenses');
+      } catch (error) {
+        throw error.message;
+      }
+    },
+
+    // 経費申請情報を取得(スタッフの場合)
+    async getExpenses({ commit }) {
+      try {
+        const uid = this.getters.getLoginUser.uid;
+        const expensesRef = await firebase.firestore().collection('expenses').doc(uid).collection('expensesId').get();
+        const expenses = [];
+        expensesRef.forEach(expensesDoc => {
+          expenses.push({
+            expensesId: expensesDoc.get('expensesId'),
+            useDate: expensesDoc.get('useDate'),
+            money: expensesDoc.get('money'),
+            applyStatusCd: expensesDoc.get('applyStatusCd'),
+            memo: expensesDoc.get('memo')
+          });
+        });
+        commit('commitExpenses', expenses);
+      } catch (error) {
+        throw error.message;
+      }
     }
   },
   modules: {
@@ -279,6 +368,9 @@ export default createStore({
     },
     getStaffs: state => {
       return state.staffs;
+    },
+    getExpenses: state => {
+      return state.expenses;
     }
   }
 })

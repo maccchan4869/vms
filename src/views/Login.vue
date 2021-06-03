@@ -53,6 +53,7 @@ export default {
         } else {
           await this.$store.dispatch('getVacation');
           await this.$store.dispatch('getVacationInfo');
+          await this.$store.dispatch('getExpenses');
           this.$router.push('/employee/vacation');
         }
       } catch (error) {
