@@ -84,11 +84,11 @@ export default {
   },
   created() {
     this.vacation = this.$store.getters.getVacation;
-    this.dispVacation = this.vacation;
     this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
     this.yearOptions = definition.getYearOptions();
+    this.searchVacation();
   },
   methods: {
     setTypeName(typeCd) {
@@ -144,7 +144,7 @@ export default {
     },
     // 検索機能
     searchVacation() {
-      const firstDay = new Date(this.selectedYear, 0, 1);
+      const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       this.dispVacation = this.vacation.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());

@@ -76,10 +76,10 @@ export default {
   },
   created() {
     this.expenses = this.$store.getters.getExpenses;
-    this.dispExpenses = this.expenses;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
     this.yearOptions = definition.getYearOptions();
+    this.searchExpenses();
   },
   methods: {
     setStatusName(statusCd) {
@@ -110,7 +110,7 @@ export default {
     },
     // 検索機能
     searchExpenses() {
-      const firstDay = new Date(this.selectedYear, 0, 1);
+      const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       this.dispExpenses = this.expenses.filter(value => 
         new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
@@ -133,7 +133,7 @@ export default {
       try {
         await this.$store.dispatch('cancelExpenses', this.cancelItem);
         this.expenses = this.$store.getters.getExpenses;
-        this.dispExpenses = this.expenses;
+        this.searchExpenses();
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '登録に失敗しました';
