@@ -8,9 +8,17 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-right">
-            <select class="mr-3" v-model="selectedYear" @change="searchExpenses">
+            <select class="mr-1" v-model="selectedYear">
               <option v-for="yearOption in yearOptions" :value="yearOption.value" v-bind:key="yearOption.value">{{ yearOption.dispValue }}</option>
             </select>
+            <select class="mr-1" v-model="selectedUid">
+              <option v-for="staffOption in staffOptions" :value="staffOption.uid" v-bind:key="staffOption.uid">{{ staffOption.staffName }}</option>
+            </select>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="0" checked>申請中</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="1">承認済み</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="2">却下</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="4">全て</label>
+            <input type="button" class="btn btn-primary" value="検索" @click="searchExpenses">
           </div>
         </div>
       </div>
@@ -59,22 +67,32 @@ export default {
   },
   data () {
     return {
-      expenses: [],
       dispExpenses: [],
       codeStatus: null,
       selectedYear: 0,
       yearOptions: [],
+      selectedUid: null,
+      staffOptions: [],
       isDispExpenses: false,
       isDispCancel: false,
+      searchKey: '0',
+      expensesSearchKey: {
+        applying: '0',
+        approved: '1',
+        rejected: '2',
+        acquired: '3',
+        all: '4'
+      },
       errorMessage: ''
     }
   },
   created() {
-    this.expenses = this.$store.getters.getExpenses;
-    this.dispExpenses = this.expenses;
+    const staffs =  this.$store.getters.getStaffs;
+    this.staffOptions = definition.getStaffOptions(staffs);
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
     this.yearOptions = definition.getYearOptions();
+    this.searchExpenses();
   },
   methods: {
     setStatusName(statusCd) {
@@ -86,6 +104,19 @@ export default {
     },
     setComma(money) {
       return money.toLocaleString();
+    },
+    // 検索
+    searchExpenses() {
+      const firstDay = new Date(this.selectedYear, 3, 1);
+      const finalDay = new Date(this.selectedYear + 1, 3, 1);
+
+      const expenses = this.$store.getters.getExpenses;
+      this.dispExpenses = expenses.filter(value => 
+        new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
+      this.dispExpenses = this.dispExpenses.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.expensesSearchKey.all);
+      if (this.selectedUid) {
+        this.dispExpenses = this.dispExpenses.filter(x => x.uid === this.selectedUid);
+      }
     }
   }
 }
