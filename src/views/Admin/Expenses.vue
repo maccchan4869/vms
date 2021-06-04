@@ -43,7 +43,8 @@
               <td class="width-8 text-center">{{ setComma(expenses.money) }}円</td>
               <td class="width-20 text-center">{{ expenses.memo }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認"
-                v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
+               @click="changeExpensesStatusCd(expenses, codeStatus.approved.statusCd)"
+               v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
                 v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
             </tr>
@@ -117,6 +118,17 @@ export default {
       if (this.selectedUid) {
         this.dispExpenses = this.dispExpenses.filter(x => x.uid === this.selectedUid);
       }
+    },
+    // 承認,却下
+    async changeExpensesStatusCd(expenses, statusCd, reason = '') {
+      await this.$store.dispatch('changeExpensesStatusCd', {
+        targetUid: expenses.uid,
+        expensesId: expenses.expensesId,
+        statusCd: statusCd,
+        reason: reason
+      });
+      this.searchExpenses();
+      //this.closeDetailModal();
     }
   }
 }

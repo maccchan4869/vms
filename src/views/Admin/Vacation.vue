@@ -44,7 +44,7 @@
               <td class="width-12 text-center">{{ setDate(vacation.endDatetime) }}<br>{{ setTime(vacation.endDatetime) }}</td>
               <td class="width-8 text-center">{{ setTypeName(vacation.typeCd) }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認" 
-                @click="changeApplyStatusCd(vacation, codeStatus.approved.statusCd)"
+                @click="changeVacationStatusCd(vacation, codeStatus.approved.statusCd)"
                 v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
                 @click="openDetailModal(vacation)"
@@ -123,10 +123,10 @@ export default {
       this.isDispDetail = false;
     },
     approveVacation() {
-      this.changeApplyStatusCd(this.targetVacation, this.codeStatus.approved.statusCd, '');
+      this.changeVacationStatusCd(this.targetVacation, this.codeStatus.approved.statusCd, '');
     },
     rejectVacation(param) {
-      this.changeApplyStatusCd(this.targetVacation, this.codeStatus.rejected.statusCd, param.reason);
+      this.changeVacationStatusCd(this.targetVacation, this.codeStatus.rejected.statusCd, param.reason);
     },
     // 検索
     async searchVacation() {
@@ -138,15 +138,14 @@ export default {
       this.dispVacation = this.vacation.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
     },
     // 承認,却下
-    async changeApplyStatusCd(vacation, statusCd, reason) {
-      await this.$store.dispatch('changeApplyStatusCd', {
+    async changeVacationStatusCd(vacation, statusCd, reason = '') {
+      await this.$store.dispatch('changeVacationStatusCd', {
         targetUid: vacation.uid,
         vacationId: vacation.vacationId,
         statusCd: statusCd,
         reason: reason
       });
-      this.vacation = this.$store.getters.getVacation;
-      this.dispVacation = this.vacation;
+      this.searchVacation();
       this.closeDetailModal();
     }
   }

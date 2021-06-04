@@ -268,18 +268,21 @@ export default createStore({
     },
 
     // 休暇申請承認,却下
-    async changeApplyStatusCd({ dispatch }, {targetUid, vacationId, statusCd, reason}) {
+    async changeVacationStatusCd({ dispatch }, {targetUid, vacationId, statusCd, reason}) {
       try {
         const db = firebase.firestore();
         const batch = db.batch();
         const vacRef = db.collection('vacation').doc(targetUid).collection('vacationId').doc(vacationId);
-        const vacListRef = firebase.firestore().collection('vacation').doc(vacationId);
+        const vacListRef = db.collection('vacation').doc(vacationId);
         batch.update(vacRef, {"applyStatusCd": statusCd});
         batch.update(vacRef, {"reason": reason});
         batch.update(vacListRef, {"applyStatusCd": statusCd});
         batch.update(vacListRef, {"reason": reason});
         await batch.commit();
-        dispatch('getVacation');
+        dispatch('getVacationList' , {
+          year: definition.getThisYear(),
+          targetUid: targetUid
+        });
       } catch (error) {
         throw error.message;
       }
@@ -373,7 +376,26 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
-    }
+    },
+
+    // 経費申請承認,却下
+    async changeExpensesStatusCd({ dispatch }, {targetUid, expensesId, statusCd, reason}) {
+      try {
+        console.log(expensesId);
+        const db = firebase.firestore();
+        const batch = db.batch();
+        const expRef = db.collection('expenses').doc(targetUid).collection('expensesId').doc(expensesId);
+        const expListRef = db.collection('expenses').doc(expensesId);
+        batch.update(expRef, {"applyStatusCd": statusCd});
+        batch.update(expRef, {"reason": reason});
+        batch.update(expListRef, {"applyStatusCd": statusCd});
+        batch.update(expListRef, {"reason": reason});
+        await batch.commit();
+        dispatch('getExpensesList');
+      } catch (error) {
+        throw error.message;
+      }
+    },
   },
   modules: {
   },
