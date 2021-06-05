@@ -71,7 +71,7 @@ export default {
     Header,
     VacationDetailModal
   },
-  created() {
+  created () {
     const staffs =  this.$store.getters.getStaffs;
     this.staffOptions = definition.getStaffOptions(staffs);
     this.codeStatus = definition.getCodeStatus();
@@ -123,7 +123,7 @@ export default {
       this.isDispDetail = false;
     },
     approveVacation() {
-      this.changeVacationStatusCd(this.targetVacation, this.codeStatus.approved.statusCd, '');
+      this.changeVacationStatusCd(this.targetVacation, this.codeStatus.approved.statusCd);
     },
     rejectVacation(param) {
       this.changeVacationStatusCd(this.targetVacation, this.codeStatus.rejected.statusCd, param.reason);

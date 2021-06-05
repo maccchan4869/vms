@@ -46,6 +46,7 @@
                @click="changeExpensesStatusCd(expenses, codeStatus.approved.statusCd)"
                v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
+               @click="openDetailModal(expenses)"
                 v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
             </tr>
           </tbody>
@@ -53,29 +54,32 @@
       </div>
     </div>
     <transition-group  name="modal">
+      <ExpensesDetailModal :val="targetExpenses" @close="closeDetailModal" @approve="approveExpenses" @reject="rejectExpenses" v-if="isDispDetail"></ExpensesDetailModal>
     </transition-group >
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue'
+import ExpensesDetailModal from '@/components/ExpensesDetailModal.vue'
 import definition from "@/helper/definition"
 
 export default {
   name: 'Expenses',
   components: {
-    Header
+    Header,
+    ExpensesDetailModal
   },
   data () {
     return {
       dispExpenses: [],
+      targetExpenses: null,
       codeStatus: null,
       selectedYear: 0,
       yearOptions: [],
       selectedUid: null,
       staffOptions: [],
-      isDispExpenses: false,
-      isDispCancel: false,
+      isDispDetail: false,
       searchKey: '0',
       expensesSearchKey: {
         applying: '0',
@@ -87,7 +91,7 @@ export default {
       errorMessage: ''
     }
   },
-  created() {
+  created () {
     const staffs =  this.$store.getters.getStaffs;
     this.staffOptions = definition.getStaffOptions(staffs);
     this.codeStatus = definition.getCodeStatus();
@@ -105,6 +109,21 @@ export default {
     },
     setComma(money) {
       return money.toLocaleString();
+    },
+    openDetailModal(expenses) {
+      this.$store.commit('commitImageUrl', expenses.imageUrl);
+      this.targetExpenses = expenses;
+      this.isDispDetail = true;
+    },
+    closeDetailModal() {
+      this.targetExpenses = null;
+      this.isDispDetail = false;
+    },
+    approveExpenses() {
+      this.changeExpensesStatusCd(this.targetExpenses, this.codeStatus.approved.statusCd);
+    },
+    rejectExpenses(param) {
+      this.changeExpensesStatusCd(this.targetExpenses, this.codeStatus.rejected.statusCd, param.reason);
     },
     // 検索
     searchExpenses() {
@@ -128,7 +147,7 @@ export default {
         reason: reason
       });
       this.searchExpenses();
-      //this.closeDetailModal();
+      this.closeDetailModal();
     }
   }
 }

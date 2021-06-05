@@ -104,10 +104,6 @@ input[type="button"] {
   margin: 0 2rem;
 }
 
-.modalOverlay .modalWindow-extra-height {
-  height: 600px !important;
-}
-
 .modalOverlay .modalWindow-medium {
   height: 250px !important;
   min-width: 600px !important;

@@ -15,24 +15,23 @@
             <td class="width-20 text-center">{{ val.staffName }}</td>
           </tr>
           <tr>
-            <td class="width-12 text-center table-active">取得開始予定時間</td>
-            <td class="width-20 text-center">{{ setDate(val.startDatetime) + ' ' + setTime(val.startDatetime) }}</td>
+            <td class="width-12 text-center table-active">使用日</td>
+            <td class="width-20 text-center">{{ setDate(val.useDate) }}</td>
           </tr>
           <tr>
-            <td class="width-12 text-center table-active">取得終了予定時間</td>
-            <td class="width-20 text-center">{{ setDate(val.endDatetime) + ' ' + setTime(val.endDatetime) }}</td>
-          </tr>
-          <tr>
-            <td class="width-12 text-center table-active">取得日数</td>
-            <td class="width-20 text-center">{{ getVacationDays(val.startDatetime, val.endDatetime) }}日</td>  
-          </tr>
-          <tr>
-            <td class="width-12 text-center table-active">休暇種別</td>
-            <td class="width-20 text-center">{{ setTypeName(val.typeCd) }}</td>  
+            <td class="width-12 text-center table-active">金額</td>
+            <td class="width-20 text-center">{{ setComma(val.money) }}円</td>
           </tr>
           <tr>
             <td class="width-12 text-center table-active">事由</td>
             <td class="width-20 text-center">{{ val.memo }}</td>  
+          </tr>
+           <tr>
+            <td class="width-12 text-center table-active">
+              <div>領収書</div>
+              <div><a :href="imageUrl">ダウンロード</a></div>
+            </td>
+            <td class="width-20 text-center"><img :src="imageUrl" class="image"></td>  
           </tr>
           <tr>
             <td class="width-12 text-center table-active">却下理由</td>
@@ -54,26 +53,25 @@
 <script>
 import definition from "@/helper/definition"
 export default {
-  name: 'VacationDetail',
+  name: 'ExpensesDetail',
   props: ['val'],
   data () {
     return {
+      imageUrl: '',
       reason: '',
       errorMessage: ''
     }
   },
+  created () {
+    this.imageUrl =  this.$store.getters.getImageUrl;
+  },
   methods: {
-    setTypeName(typeCd) {
-      return definition.setTypeName(typeCd);
+    setComma(money) {
+      return money.toLocaleString();
     },
-    setDate(datetime) {
+    setDate(date) {
+      const datetime = new Date(date);
       return definition.setDate(datetime);
-    },
-    setTime(datetime) {
-      return definition.setTime(datetime);
-    },
-    getVacationDays(startDatetime, endDatetime) {
-      return definition.getVacationDays(startDatetime, endDatetime);
     },
     // 却下する
     reject() {
@@ -81,6 +79,12 @@ export default {
         this.errorMessage = '却下理由を入力してください';
         return;
       }
+      this.$emit('reject', {
+        reason: this.reason
+      });
+    },
+    // 画像をローカルに保存する
+    download() {
       this.$emit('reject', {
         reason: this.reason
       });
@@ -94,6 +98,10 @@ tr {
   height: 50px;
 }
 .modalWindow-extra-height {
-  height: 570px !important;
+  height: 700px !important;
+}
+.image {
+  width: 300px;
+  height: 250px;
 }
 </style>

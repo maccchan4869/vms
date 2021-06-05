@@ -17,7 +17,8 @@ export default createStore({
     },
     vacation: [],
     expenses: [],
-    staffs: []
+    staffs: [],
+    imageUrl: ''
   },
   mutations: {
     commitLoginUser(state, val) {
@@ -34,6 +35,9 @@ export default createStore({
     },
     commitExpenses(state, val) {
       state.expenses = val; 
+    },
+    commitImageUrl(state, val) {
+      state.imageUrl = val;
     },
   },
   actions: {
@@ -295,7 +299,8 @@ export default createStore({
         const docRef = await firebase.firestore().collection('expenses').add({});
         // firestrageへ登録
         const imagesRef = firebase.storage().ref().child(`images/${user.uid}/${docRef.id}.jpg`);
-        await imagesRef.putString(item.image.substring(23), 'base64');
+        const snapshot = await imagesRef.putString(item.image.substring(23), 'base64');
+        const imageUrl = await snapshot.ref.getDownloadURL();
         // firestoreへ登録
         await firebase.firestore().collection('expenses').doc(docRef.id).set({
           uid: user.uid,
@@ -305,7 +310,8 @@ export default createStore({
           money: item.money,
           applyStatusCd: item.applyStatusCd,
           memo: item.memo,
-          reason: ''
+          reason: '',
+          imageUrl: imageUrl
         });
         await firebase.firestore().collection('expenses').doc(user.uid).collection('expensesId').doc(docRef.id).set({
           uid: user.uid,
@@ -369,7 +375,8 @@ export default createStore({
             useDate: expensesDoc.get('useDate'),
             money: expensesDoc.get('money'),
             applyStatusCd: expensesDoc.get('applyStatusCd'),
-            memo: expensesDoc.get('memo')
+            memo: expensesDoc.get('memo'),
+            imageUrl: expensesDoc.get('imageUrl')
           });
         });
         commit('commitExpenses', expenses);
@@ -395,7 +402,7 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
-    },
+    }
   },
   modules: {
   },
@@ -414,6 +421,9 @@ export default createStore({
     },
     getExpenses: state => {
       return state.expenses;
+    },
+    getImageUrl: state => {
+      return state.imageUrl;
     }
   }
 })
