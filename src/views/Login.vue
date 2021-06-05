@@ -15,6 +15,10 @@
     <div class="row align-items-center justify-content-center common-padding">
       <input type="button" class="btn btn-primary" value="ログイン" @click="clickLogin">
     </div>
+    <div class="row align-items-center justify-content-center common-padding">
+      <input type="button" class="btn btn-primary btn-temporary mr-2" value="管理者として仮ログイン" @click="clickAdminLogin">
+      <input type="button" class="btn btn-primary btn-temporary ml-2" value="スタッフとして仮ログイン" @click="clickStaffLogin">
+    </div>
   </div>
 </template>
 
@@ -61,7 +65,25 @@ export default {
         this.errorMessage = 'ログインに失敗しました';
         console.error(error);
       }
+    },
+    // 管理者として仮ログイン
+    clickAdminLogin() {
+      this.email = 'a@test.com';
+      this.password = '123456';
+      this.clickLogin();
+    },
+    // スタッフとして仮ログイン
+    clickStaffLogin() {
+      this.email = 'b@test.com';
+      this.password = '123456';
+      this.clickLogin();
     }
   }
 }
 </script>
+
+<style>
+.btn-temporary {
+  width: 250px !important;
+}
+</style>
