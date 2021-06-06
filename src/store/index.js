@@ -42,17 +42,11 @@ export default createStore({
   },
   actions: {
     // ログイン
-    async login({ commit, dispatch }, {email, password}) {
+    async login({ dispatch }, {email, password}) {
       try {
         await firebase.auth().signInWithEmailAndPassword(email, password);
         const uid = firebase.auth().currentUser.uid;
-        const userDoc = await firebase.firestore().collection('users').doc(uid).get();
-        commit('commitLoginUser', {
-          uid: userDoc.get('uid'),
-          staffName: userDoc.get('staffName'),
-          admin: userDoc.get('admin'),
-          daysLeft: userDoc.get('daysLeft')
-        });
+        await dispatch('getStaff', uid);
         await dispatch('getStaffList', uid);
       } catch (error) {
         throw error.message;
@@ -129,6 +123,21 @@ export default createStore({
         await dispatch('getStaffList', loginUid);
       } catch (error) {
         console.error(error.message);
+      }
+    },
+
+    // スタッフを取得
+    async getStaff( {commit}, loginUid) {
+      try {
+        const userDoc = await firebase.firestore().collection('users').doc(loginUid).get();
+        commit('commitLoginUser', {
+          uid: userDoc.get('uid'),
+          staffName: userDoc.get('staffName'),
+          admin: userDoc.get('admin'),
+          daysLeft: userDoc.get('daysLeft')
+        });
+      } catch (error) {
+        throw error.message;
       }
     },
 
@@ -227,11 +236,12 @@ export default createStore({
 
     // 休暇申請
     async applyVacation({ dispatch }, item) {
+      const db = firebase.firestore();
       try {
         const user = this.getters.getLoginUser;
         const thisYear = definition.getThisYear();
-        const docRef = await firebase.firestore().collection('vacation').add({});
-        await firebase.firestore().collection('vacation').doc(docRef.id).set({
+        const docRef = await db.collection('vacation').add({});
+        await db.collection('vacation').doc(docRef.id).set({
           uid: user.uid,
           vacationId: docRef.id,
           year: thisYear,
@@ -243,7 +253,7 @@ export default createStore({
           memo: item.memo,
           reason: ''
         });
-        await firebase.firestore().collection('vacation').doc(user.uid).collection('vacationId').doc(docRef.id).set({
+        await db.collection('vacation').doc(user.uid).collection('vacationId').doc(docRef.id).set({
           uid: user.uid,
           vacationId: docRef.id,
           startDatetime: item.startDatetime,
@@ -253,6 +263,10 @@ export default createStore({
           memo: item.memo,
           reason: ''
         });
+        await db.collection('users').doc(user.uid).update({
+          daysLeft: firebase.firestore.FieldValue.increment(-item.vacationDays)
+        });
+        await dispatch('getStaff', user.uid);
         await dispatch('getVacation');
       } catch (error) {
         throw error.message;
@@ -262,9 +276,17 @@ export default createStore({
     // 休暇申請取消
     async cancelVacation({ dispatch }, item) {
       try {
+        const db = firebase.firestore();
         const uid = this.getters.getLoginUser.uid;
-        await firebase.firestore().collection('vacation').doc(uid).collection('vacationId').doc(item.vacationId).delete();
-        await firebase.firestore().collection('vacation').doc(item.vacationId).delete();
+        const vacationDoc = await db.collection('vacation').doc(uid).collection('vacationId').doc(item.vacationId).get();
+        const startDatetime = vacationDoc.get('startDatetime').toDate();
+        const endDatetime = vacationDoc.get('endDatetime').toDate();
+        const vacationDays = definition.getVacationDays(startDatetime, endDatetime);
+        await db.collection('vacation').doc(uid).collection('vacationId').doc(item.vacationId).delete();
+        await db.collection('vacation').doc(item.vacationId).delete();
+        await db.collection('users').doc(uid).update({
+          daysLeft: firebase.firestore.FieldValue.increment(vacationDays)
+        });
         dispatch('getVacation');
       } catch (error) {
         throw error.message;

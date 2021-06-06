@@ -60,6 +60,7 @@ export default {
   },
   data () {
     return {
+      
       errorMessage: '',
       startDate: '',
       startTime: '09:00',
@@ -74,10 +75,17 @@ export default {
   methods: {
     // 入力データチェック
     validationInputData() {
+      const staff = this.$store.getters.getLoginUser;
       const startUnixTime = Date.parse(`${this.startDate} ${this.startTime}`);
       const endUnixTime = Date.parse(`${this.endDate} ${this.endTime}`);
       const startDatetime = new Date(startUnixTime);
       const endDatetime = new Date(endUnixTime);
+      const vacationDays = definition.getVacationDays(startDatetime, endDatetime);
+      if((vacationDays > staff.daysLeft && this.typeCd === this.typeOptions.oneDay.typeCd)
+      || (vacationDays > staff.daysLeft && this.typeCd === this.typeOptions.halfDay.typeCd)) {
+        this.errorMessage = '残休暇日数が足りません';
+        return;
+      }
       if(isNaN(startUnixTime) || isNaN(endUnixTime)) {
         this.errorMessage = '日付の入力値が不正です';
         return;
@@ -95,7 +103,8 @@ export default {
         endDatetime: endDatetime,
         typeCd: this.typeCd,
         applyStatusCd: this.codeStatus.applying.statusCd,
-        memo: this.memo
+        memo: this.memo,
+        vacationDays: vacationDays
       });
     }
   }
