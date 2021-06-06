@@ -15,7 +15,10 @@
     <div class="row align-items-center justify-content-center common-padding">
       <input type="button" class="btn btn-primary" value="ログイン" @click="clickLogin">
     </div>
-    <div class="row align-items-center justify-content-center common-padding">
+    <div class="row align-items-center justify-content-center common-padding mt-5">
+      <p><router-link to="/password">パスワードの再設定はこちら</router-link></p>
+    </div>
+    <div class="row align-items-center justify-content-center common-padding mt-5">
       <input type="button" class="btn btn-primary btn-temporary mr-2" value="管理者として仮ログイン" @click="clickAdminLogin">
       <input type="button" class="btn btn-primary btn-temporary ml-2" value="スタッフとして仮ログイン" @click="clickStaffLogin">
     </div>
