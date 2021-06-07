@@ -62,7 +62,7 @@
 <script>
 import Header from '@/components/Header.vue'
 import ExpensesDetailModal from '@/components/ExpensesDetailModal.vue'
-import definition from "@/helper/definition"
+import definition from '@/helper/definition'
 
 export default {
   name: 'Expenses',

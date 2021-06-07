@@ -60,7 +60,7 @@ import Header from '@/components/Header.vue'
 import RegisterUserModal from '@/components/RegisterUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue'
 import EditUserModal from '@/components/EditUserModal.vue'
-import definition from "@/helper/definition"
+import definition from '@/helper/definition'
 
 export default {
   name: 'user',

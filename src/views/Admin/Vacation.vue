@@ -63,7 +63,7 @@
 <script>
 import Header from '@/components/Header.vue'
 import VacationDetailModal from '@/components/VacationDetailModal.vue'
-import definition from "@/helper/definition"
+import definition from '@/helper/definition'
 
 export default {
   name: 'Vacation',

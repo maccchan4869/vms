@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import definition from "@/helper/definition"
+import definition from '@/helper/definition'
 
 export default {
   name: 'AppExpensesModal',

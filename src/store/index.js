@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import firebase from 'firebase'
-import definition from "@/helper/definition"
-/* import mail from "@/helper/mail" */
+import definition from '@/helper/definition'
+/* import mail from '@/helper/mail' */
 
 export default createStore({
   state: {
@@ -49,7 +49,7 @@ export default createStore({
         const uid = firebase.auth().currentUser.uid;
         await dispatch('getStaff', uid);
         await dispatch('getStaffList', uid);
-        //mail.sendMail({destination: '', subject: "subject", text: "text"});
+        //mail.sendMail({destination: '', subject: 'subject', text: 'text'});
       } catch (error) {
         throw error.message;
       }
@@ -213,9 +213,9 @@ export default createStore({
       try {
         let vacationRef = null;
         if (targetUid) {
-          vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).where("uid", "==", targetUid).orderBy('startDatetime').get();
+          vacationRef = await firebase.firestore().collection('vacation').where('year', '==', year).where('uid', '==', targetUid).orderBy('startDatetime').get();
         } else {
-          vacationRef = await firebase.firestore().collection('vacation').where("year", "==", year).orderBy('startDatetime').get();
+          vacationRef = await firebase.firestore().collection('vacation').where('year', '==', year).orderBy('startDatetime').get();
         }
         const vacation = [];
         vacationRef.forEach(vacationDoc => {
@@ -302,10 +302,10 @@ export default createStore({
         const batch = db.batch();
         const vacRef = db.collection('vacation').doc(targetUid).collection('vacationId').doc(vacationId);
         const vacListRef = db.collection('vacation').doc(vacationId);
-        batch.update(vacRef, {"applyStatusCd": statusCd});
-        batch.update(vacRef, {"reason": reason});
-        batch.update(vacListRef, {"applyStatusCd": statusCd});
-        batch.update(vacListRef, {"reason": reason});
+        batch.update(vacRef, {'applyStatusCd': statusCd});
+        batch.update(vacRef, {'reason': reason});
+        batch.update(vacListRef, {'applyStatusCd': statusCd});
+        batch.update(vacListRef, {'reason': reason});
         await batch.commit();
         dispatch('getVacationList' , {
           year: definition.getThisYear(),
@@ -416,10 +416,10 @@ export default createStore({
         const batch = db.batch();
         const expRef = db.collection('expenses').doc(targetUid).collection('expensesId').doc(expensesId);
         const expListRef = db.collection('expenses').doc(expensesId);
-        batch.update(expRef, {"applyStatusCd": statusCd});
-        batch.update(expRef, {"reason": reason});
-        batch.update(expListRef, {"applyStatusCd": statusCd});
-        batch.update(expListRef, {"reason": reason});
+        batch.update(expRef, {'applyStatusCd': statusCd});
+        batch.update(expRef, {'reason': reason});
+        batch.update(expListRef, {'applyStatusCd': statusCd});
+        batch.update(expListRef, {'reason': reason});
         await batch.commit();
         dispatch('getExpensesList');
       } catch (error) {

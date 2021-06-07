@@ -52,7 +52,7 @@
 import Header from '@/components/Header.vue'
 import AppExpensesModal from '@/components/AppExpensesModal.vue'
 import CancelModal from '@/components/CancelModal.vue'
-import definition from "@/helper/definition"
+import definition from '@/helper/definition'
 
 export default {
   name: 'Expenses',
