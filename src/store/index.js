@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import firebase from 'firebase'
 import definition from "@/helper/definition"
+/* import mail from "@/helper/mail" */
 
 export default createStore({
   state: {
@@ -56,6 +57,7 @@ export default createStore({
         const uid = firebase.auth().currentUser.uid;
         await dispatch('getStaff', uid);
         await dispatch('getStaffList', uid);
+        //mail.sendMail({destination: 'ymatsuo554@gmail.com', subject: "subject", text: "text"});
       } catch (error) {
         throw error.message;
       }
