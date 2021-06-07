@@ -22,14 +22,6 @@ export default createStore({
     imageUrl: ''
   },
   mutations: {
-    commitEmpty(state) {
-      const val = {
-        uid: '',
-        staffName: '',
-        admin: false
-      }
-      state.loginUser = val;
-    },
     commitLoginUser(state, val) {
       state.loginUser = val;
     },
@@ -430,18 +422,6 @@ export default createStore({
         batch.update(expListRef, {"reason": reason});
         await batch.commit();
         dispatch('getExpensesList');
-      } catch (error) {
-        throw error.message;
-      }
-    },
-
-    // パスワードリセットメールを送信
-    async sendPasswordResetMail({ commit }, email) {
-      try {
-        const auth = firebase.auth();
-        await auth.sendPasswordResetEmail(email);
-        // commit, dispatchがないため、空オブジェクトをコミット
-        commit('commitEmpty');
       } catch (error) {
         throw error.message;
       }

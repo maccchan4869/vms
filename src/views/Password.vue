@@ -22,6 +22,7 @@
 
 <script>
 import Header from '@/components/Header.vue'
+import firebase from 'firebase'
 
 export default {
   name: 'login',
@@ -38,7 +39,8 @@ export default {
     // パスワードリセットメールを送信
     async sendPasswordResetMail() {
       try {
-        await this.$store.dispatch('sendPasswordResetMail', this.email);
+        const auth = firebase.auth();
+        await auth.sendPasswordResetEmail(this.email);
         alert('メール送信に成功しました。ページを閉じてご確認ください。');
         this.errorMessage = '';
       } catch (error) {
