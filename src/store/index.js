@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import firebase from 'firebase'
 import definition from '@/helper/definition'
-/* import mail from '@/helper/mail' */
+import mail from '@/helper/mail'
 
 export default createStore({
   state: {
@@ -19,6 +19,7 @@ export default createStore({
     vacation: [],
     expenses: [],
     staffs: [],
+    mailingList: [],
     imageUrl: ''
   },
   mutations: {
@@ -40,6 +41,9 @@ export default createStore({
     commitImageUrl(state, val) {
       state.imageUrl = val;
     },
+    commitMailingList(state, val) {
+      state.mailingList = val;
+    },
   },
   actions: {
     // ログイン
@@ -49,7 +53,6 @@ export default createStore({
         const uid = firebase.auth().currentUser.uid;
         await dispatch('getStaff', uid);
         await dispatch('getStaffList', uid);
-        //mail.sendMail({destination: '', subject: 'subject', text: 'text'});
       } catch (error) {
         throw error.message;
       }
@@ -270,6 +273,12 @@ export default createStore({
         });
         await dispatch('getStaff', user.uid);
         await dispatch('getVacation');
+        const mailInfo = {
+          destinations: this.getters.getMailingList,
+          subject: '休暇申請がありました',
+          text: `${user.staffName}から休暇申請が届きました。`
+        };
+        mail.sendMailToAdministrator(mailInfo);
       } catch (error) {
         throw error.message;
       }
@@ -279,6 +288,7 @@ export default createStore({
     async cancelVacation({ dispatch }, item) {
       try {
         const db = firebase.firestore();
+        const staffName = this.getters.getLoginUser.staffName;
         const uid = this.getters.getLoginUser.uid;
         const vacationDoc = await db.collection('vacation').doc(uid).collection('vacationId').doc(item.vacationId).get();
         const startDatetime = vacationDoc.get('startDatetime').toDate();
@@ -290,6 +300,12 @@ export default createStore({
           daysLeft: firebase.firestore.FieldValue.increment(vacationDays)
         });
         dispatch('getVacation');
+        const mailInfo = {
+          destinations: this.getters.getMailingList,
+          subject: '休暇申請取消が行われました',
+          text: `${staffName}が休暇申請を取消しました。`
+        };
+        mail.sendMailToAdministrator(mailInfo);
       } catch (error) {
         throw error.message;
       }
@@ -298,6 +314,7 @@ export default createStore({
     // 休暇申請承認,却下
     async changeVacationStatusCd({ dispatch }, {targetUid, vacationId, statusCd, reason}) {
       try {
+        // ステータスを更新
         const db = firebase.firestore();
         const batch = db.batch();
         const vacRef = db.collection('vacation').doc(targetUid).collection('vacationId').doc(vacationId);
@@ -311,6 +328,26 @@ export default createStore({
           year: definition.getThisYear(),
           targetUid: targetUid
         });
+
+        // 承認、却下結果をメール送信
+        const userDoc = await db.collection('users').doc(targetUid).get();
+        const codeStatus = definition.getCodeStatus();
+        let subject = '';
+        let text = '';
+        if (statusCd === codeStatus.approved.statusCd) {
+          subject = '休暇申請が承認されました';
+          text = '休暇申請が承認されました。';
+        } else {
+          subject = '休暇申請が却下されました';
+          text = `${reason}という理由で休暇申請が却下されました。`;
+        }
+        const mailInfo = {
+          destination: userDoc.get('email'),
+          subject: subject,
+          text: text
+        };
+        mail.sendMailToStaff(mailInfo);
+
       } catch (error) {
         throw error.message;
       }
@@ -347,6 +384,12 @@ export default createStore({
           reason: ''
         });
         await dispatch('getExpenses');
+        const mailInfo = {
+          destinations: this.getters.getMailingList,
+          subject: '経費精算申請がありました',
+          text: `${user.staffName}から経費精算申請が届きました。`
+        };
+        mail.sendMailToAdministrator(mailInfo);
       } catch (error) {
         throw error.message;
       }
@@ -356,10 +399,17 @@ export default createStore({
     async cancelExpenses({ dispatch }, param) {
       try {
         const uid = this.getters.getLoginUser.uid;
+        const staffName = this.getters.getLoginUser.staffName;
         await firebase.storage().ref().child(`images/${uid}/${param.expensesId}.jpg`).delete();
         await firebase.firestore().collection('expenses').doc(uid).collection('expensesId').doc(param.expensesId).delete();
         await firebase.firestore().collection('expenses').doc(param.expensesId).delete();
         dispatch('getExpenses');
+        const mailInfo = {
+          destinations: this.getters.getMailingList,
+          subject: '経費精算申請取消が行われました',
+          text: `${staffName}が経費精算申請を取消しました。`
+        };
+        mail.sendMailToAdministrator(mailInfo);
       } catch (error) {
         throw error.message;
       }
@@ -422,10 +472,46 @@ export default createStore({
         batch.update(expListRef, {'reason': reason});
         await batch.commit();
         dispatch('getExpensesList');
+
+        // 承認、却下結果をメール送信
+        const userDoc = await db.collection('users').doc(targetUid).get();
+        const codeStatus = definition.getCodeStatus();
+        let subject = '';
+        let text = '';
+        if (statusCd === codeStatus.approved.statusCd) {
+          subject = '経費精算申請が承認されました';
+          text = '経費精算申請が承認されました';
+        } else {
+          subject = '経費精算申請が却下されました';
+          text = `${reason}という理由で経費申請が却下されました。`;
+        }
+        const mailInfo = {
+          destination: userDoc.get('email'),
+          subject: subject,
+          text: text
+        };
+        mail.sendMailToStaff(mailInfo);
       } catch (error) {
         throw error.message;
       }
-    }
+    },
+
+    // メーリングリストを取得（スタッフのみ）
+    async getMailingList({ commit }) {
+      try {
+        const userRef = await firebase.firestore().collection('users').where('admin', '==', true).get();
+        const mailingList = [];
+        userRef.forEach(userDoc => {
+          mailingList.push({
+            destination: userDoc.get('email'),
+          });
+        });
+        commit('commitMailingList', mailingList);
+        console.log(mailingList);
+      } catch (error) {
+        throw error.message;
+      }
+    },
   },
   modules: {
   },
@@ -447,6 +533,9 @@ export default createStore({
     },
     getImageUrl: state => {
       return state.imageUrl;
+    },
+    getMailingList: state => {
+      return state.mailingList;
     }
   }
 })
