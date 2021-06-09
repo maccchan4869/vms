@@ -507,7 +507,6 @@ export default createStore({
           });
         });
         commit('commitMailingList', mailingList);
-        console.log(mailingList);
       } catch (error) {
         throw error.message;
       }
