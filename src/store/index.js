@@ -10,12 +10,6 @@ export default createStore({
       staffName: '',
       admin: false
     },
-    vacationInfo: {
-      applyStartDay: null,
-      applyEndDay: null,
-      vacationDays: 0,
-      remainingVacationDays: 0,
-    },
     vacation: [],
     expenses: [],
     staffs: [],
@@ -72,7 +66,7 @@ export default createStore({
           staffName: item.staffName,
           email: item.email,
           joiningDate: new Date(item.joiningDate.year, item.joiningDate.month, item.joiningDate.day),
-          firstSupplyHolidays: new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()),
+          supplyHolidays: new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()),
           admin: item.admin,
           daysLeft: 0
         });
@@ -160,30 +154,12 @@ export default createStore({
             staffName: userDoc.get('staffName'), 
             email: userDoc.get('email'),
             joiningDate: userDoc.get('joiningDate').toDate(),
-            firstSupplyHolidays: userDoc.get('firstSupplyHolidays').toDate(),
+            supplyHolidays: userDoc.get('supplyHolidays').toDate(),
             admin: userDoc.get('admin'),
             daysLeft: userDoc.get('daysLeft')
           });
         });
         commit('commitStaffs', staffs);
-      } catch (error) {
-        throw error.message;
-      }
-    },
-
-    // 休暇情報を取得
-    async getVacationInfo({ commit }) {
-      try {
-        const uid = this.getters.getLoginUser.uid;
-        const infoRef = await firebase.firestore().collection('information').doc(uid).collection('year')
-          .orderBy('year', 'desc').limit(1).get();
-        infoRef.forEach(infoDoc => {
-          commit('commitVacationInfo', {
-            applyStartDay: infoDoc.get('applyStartDay').toDate(),
-            applyEndDay: infoDoc.get('applyEndDay').toDate(),
-            supplyVacationDays: infoDoc.get('supplyVacationDays')
-          });
-        });
       } catch (error) {
         throw error.message;
       }
@@ -520,9 +496,6 @@ export default createStore({
     },
     getVacation: state => {
       return state.vacation;
-    },
-    getVacationInfo: state => {
-      return state.vacationInfo;
     },
     getStaffs: state => {
       return state.staffs;

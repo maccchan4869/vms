@@ -60,7 +60,6 @@ export default {
           this.$router.push('/admin/user');
         } else {
           await this.$store.dispatch('getVacation');
-          await this.$store.dispatch('getVacationInfo');
           await this.$store.dispatch('getExpenses');
           await this.$store.dispatch('getMailingList');
           this.$router.push('/employee/vacation');
