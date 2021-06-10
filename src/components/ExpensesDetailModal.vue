@@ -33,7 +33,7 @@
             </td>
             <td class="width-20 text-center"><img :src="imageUrl" class="image"></td>  
           </tr>
-          <tr>
+          <tr v-if="setIsDispButton(val.applyStatusCd)">
             <td class="width-12 text-center table-active">却下理由</td>
             <td class="width-20 text-center">
               <input type="text" maxlength="20" v-model="reason">
@@ -42,7 +42,8 @@
         </tbody>
       </table>
     </div>
-    <div class="row align-items-center justify-content-center mt-3">
+    <div class="row align-items-center justify-content-center mt-3"
+      v-if="setIsDispButton(val.applyStatusCd)">
       <input type="button" class="btn btn-primary" value="承認" @click="$emit('approve')">
       <input type="button" class="btn btn-danger" value="却下" @click="reject">
     </div>
@@ -52,11 +53,13 @@
 
 <script>
 import definition from '@/helper/definition'
+
 export default {
   name: 'ExpensesDetail',
   props: ['val'],
   data () {
     return {
+      codeStatus: null,
       imageUrl: '',
       reason: '',
       errorMessage: ''
@@ -64,6 +67,7 @@ export default {
   },
   created () {
     this.imageUrl =  this.$store.getters.getImageUrl;
+    this.codeStatus = definition.getCodeStatus();
   },
   methods: {
     setComma(money) {
@@ -72,6 +76,9 @@ export default {
     setDate(date) {
       const datetime = new Date(date);
       return definition.setDate(datetime);
+    },
+    setIsDispButton(applyStatusCd) {
+      return applyStatusCd === this.codeStatus.applying.statusCd;
     },
     // 却下する
     reject() {

@@ -34,7 +34,7 @@
             <td class="width-12 text-center table-active">事由</td>
             <td class="width-20 text-center">{{ val.memo }}</td>  
           </tr>
-          <tr>
+          <tr v-if="setIsDispButton(val.applyStatusCd)">
             <td class="width-12 text-center table-active">却下理由</td>
             <td class="width-20 text-center">
               <input type="text" maxlength="20" v-model="reason">
@@ -43,7 +43,8 @@
         </tbody>
       </table>
     </div>
-    <div class="row align-items-center justify-content-center mt-3">
+    <div class="row align-items-center justify-content-center mt-3"
+      v-if="setIsDispButton(val.applyStatusCd)">
       <input type="button" class="btn btn-primary" value="承認" @click="$emit('approve')">
       <input type="button" class="btn btn-danger" value="却下" @click="reject">
     </div>
@@ -53,14 +54,19 @@
 
 <script>
 import definition from '@/helper/definition'
+
 export default {
   name: 'VacationDetail',
   props: ['val'],
   data () {
     return {
+      codeStatus: null,
       reason: '',
       errorMessage: ''
     }
+  },
+  created () {
+    this.codeStatus = definition.getCodeStatus();
   },
   methods: {
     setTypeName(typeCd) {
@@ -71,6 +77,9 @@ export default {
     },
     setTime(datetime) {
       return definition.setTime(datetime);
+    },
+    setIsDispButton(applyStatusCd) {
+      return applyStatusCd === this.codeStatus.applying.statusCd;
     },
     getVacationDays(startDatetime, endDatetime) {
       return definition.getVacationDays(startDatetime, endDatetime);
