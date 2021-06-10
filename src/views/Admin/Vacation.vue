@@ -47,8 +47,7 @@
                 @click="changeVacationStatusCd(vacation, codeStatus.approved.statusCd)"
                 v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
-                @click="openDetailModal(vacation)"
-                v-if="vacation.applyStatusCd === codeStatus.applying.statusCd"></td>
+                @click="openDetailModal(vacation)"></td>
             </tr>
           </tbody>
         </table>

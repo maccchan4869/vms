@@ -44,7 +44,7 @@
               <td class="width-20 text-center">{{ expenses.memo }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-primary" value="承認"
                @click="changeExpensesStatusCd(expenses, codeStatus.approved.statusCd)"
-               v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
+               v-if="expenses.applyStatusCd === codeStatus.applying.statusCd"></td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="詳細"
                @click="openDetailModal(expenses)"
                 v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>

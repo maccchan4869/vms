@@ -35,7 +35,7 @@
               <td class="width-20 text-center">{{ expenses.memo }}</td>
               <td class="width-8 text-center">{{ setStatusName(expenses.applyStatusCd) }}</td>
               <td class="width-8 text-center"><input type="button" class="btn btn-danger" value="取消"
-                @click="openCancelModal(expenses)" v-if="expenses.applyStatusCd !== codeStatus.acquired.statusCd"></td>
+                @click="openCancelModal(expenses)" v-if="expenses.applyStatusCd !== codeStatus.approved.statusCd"></td>
             </tr>
           </tbody>
         </table>
