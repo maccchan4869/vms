@@ -66,7 +66,6 @@ export default {
   data () {
     return {
       daysLeft: 0,
-      vacation: [],
       dispVacation: [],
       cancelItem: null,
       isDispVacation: false,
@@ -83,7 +82,6 @@ export default {
     }
   },
   created() {
-    this.vacation = this.$store.getters.getVacation;
     this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
@@ -146,14 +144,15 @@ export default {
     searchVacation() {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
-      this.dispVacation = this.vacation.filter(value => 
+      const vacation = this.$store.getters.getVacation;
+      this.dispVacation = vacation.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
     },
     // 休暇を申請
     async applyVacation(item) {
       try {
         await this.$store.dispatch('applyVacation', item);
-        this.vacation = this.$store.getters.getVacation;
+        this.searchVacation();
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '登録に失敗しました';
@@ -165,7 +164,7 @@ export default {
     async cancelVacation() {
       try {
         await this.$store.dispatch('cancelVacation', this.cancelItem);
-        this.vacation = this.$store.getters.getVacation;
+        this.searchVacation();
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '取消に失敗しました';

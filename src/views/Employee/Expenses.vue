@@ -63,7 +63,6 @@ export default {
   },
   data () {
     return {
-      expenses: [],
       dispExpenses: [],
       cancelItem: null,
       codeStatus: null,
@@ -75,7 +74,6 @@ export default {
     }
   },
   created() {
-    this.expenses = this.$store.getters.getExpenses;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
     this.yearOptions = definition.getYearOptions();
@@ -112,15 +110,15 @@ export default {
     searchExpenses() {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
-      this.dispExpenses = this.expenses.filter(value => 
+      const expenses = this.$store.getters.getExpenses;
+      this.dispExpenses = expenses.filter(value => 
         new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
     },
     // 経費申請
     async applyExpenses(param) {
       try {
         await this.$store.dispatch('applyExpenses', param);
-        this.expenses = this.$store.getters.getExpenses;
-        this.dispExpenses = this.expenses;
+        this.searchExpenses();
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '登録に失敗しました';
@@ -132,7 +130,6 @@ export default {
     async cancelExpenses() {
       try {
         await this.$store.dispatch('cancelExpenses', this.cancelItem);
-        this.expenses = this.$store.getters.getExpenses;
         this.searchExpenses();
         this.errorMessage = '';
       } catch (error) {

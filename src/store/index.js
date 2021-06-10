@@ -275,7 +275,7 @@ export default createStore({
         await db.collection('users').doc(uid).update({
           daysLeft: firebase.firestore.FieldValue.increment(vacationDays)
         });
-        dispatch('getVacation');
+        await dispatch('getVacation');
         const mailInfo = {
           destinations: this.getters.getMailingList,
           subject: '休暇申請取消が行われました',
@@ -300,7 +300,7 @@ export default createStore({
         batch.update(vacListRef, {'applyStatusCd': statusCd});
         batch.update(vacListRef, {'reason': reason});
         await batch.commit();
-        dispatch('getVacationList' , {
+        await dispatch('getVacationList' , {
           year: definition.getThisYear(),
           targetUid: targetUid
         });
@@ -379,7 +379,7 @@ export default createStore({
         await firebase.storage().ref().child(`images/${uid}/${param.expensesId}.jpg`).delete();
         await firebase.firestore().collection('expenses').doc(uid).collection('expensesId').doc(param.expensesId).delete();
         await firebase.firestore().collection('expenses').doc(param.expensesId).delete();
-        dispatch('getExpenses');
+        await dispatch('getExpenses');
         const mailInfo = {
           destinations: this.getters.getMailingList,
           subject: '経費精算申請取消が行われました',
@@ -447,7 +447,7 @@ export default createStore({
         batch.update(expListRef, {'applyStatusCd': statusCd});
         batch.update(expListRef, {'reason': reason});
         await batch.commit();
-        dispatch('getExpensesList');
+        await dispatch('getExpensesList');
 
         // 承認、却下結果をメール送信
         const userDoc = await db.collection('users').doc(targetUid).get();

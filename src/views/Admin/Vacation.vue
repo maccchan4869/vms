@@ -81,7 +81,6 @@ export default {
   },
   data () {
     return {
-      vacation: [],
       dispVacation: [],
       targetVacation: null,
       codeStatus: null,
@@ -134,8 +133,8 @@ export default {
         year: this.selectedYear,
         targetUid: this.selectedUid
       });
-      this.vacation = this.$store.getters.getVacation;
-      this.dispVacation = this.vacation.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
+      const vacation = this.$store.getters.getVacation;
+      this.dispVacation = vacation.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
     },
     // 承認,却下
     async changeVacationStatusCd(vacation, statusCd, reason = '') {
