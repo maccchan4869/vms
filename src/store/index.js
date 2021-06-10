@@ -70,7 +70,12 @@ export default createStore({
           admin: item.admin,
           daysLeft: 0
         });
-        await dispatch('getStaffList', uid);
+        const email = localStorage.getItem('email');
+        const password = localStorage.getItem('password');
+        await dispatch('login', {
+          email: email,
+          password: password
+        });
       } catch (error) {
         throw error.message;
       }

@@ -50,6 +50,8 @@ export default {
           email: this.email,
           password: this.password
         });
+        localStorage.setItem('email', this.email);
+        localStorage.setItem('password', this.password);
         const loginUser = this.$store.getters.getLoginUser;
         if (loginUser.admin) {
           await this.$store.dispatch('getVacationList', {
