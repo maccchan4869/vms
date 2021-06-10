@@ -46,39 +46,104 @@ exports.sendMail = functions.https.onCall((data, context) => {
   });
 });
 
-exports.updateApplyStatusCd = functions.https.onRequest((request, response) => {
-  const today = new Date();
-  // リージョン設定による時差を修正
-  today.setHours(today.getHours() + 9);
-  const vacation = [];
-  db.collection("vacation")
-      .where("applyStatusCd", "==", codeStatus.approved.statusCd).get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((vacationDoc) => {
-          if (vacationDoc.get("endDatetime").toDate() >= today) {
-            return;
-          }
-          vacation.push({
-            uid: vacationDoc.get("uid"),
-            vacationId: vacationDoc.get("vacationId"),
+exports.updateApplyStatusCd = functions.pubsub
+    .schedule("0 0 * * *")
+    .timeZone("Asia/Tokyo")
+    .onRun((context) => {
+      const today = new Date();
+      // リージョン設定による時差を修正
+      today.setHours(today.getHours() + 9);
+      db.collection("vacation")
+          .where("applyStatusCd", "==", codeStatus.approved.statusCd).get()
+          .then((querySnapshot) => {
+            const vacation = [];
+            querySnapshot.forEach((vacationDoc) => {
+              if (vacationDoc.get("endDatetime").toDate() >= today) {
+                return;
+              }
+              vacation.push({
+                uid: vacationDoc.get("uid"),
+                vacationId: vacationDoc.get("vacationId"),
+              });
+            });
+            const batch = db.batch();
+            vacation.forEach((e) => {
+              const vacListRef = db.collection("vacation").doc(e.vacationId);
+              const vacRef = db.collection("vacation").doc(e.uid)
+                  .collection("vacationId").doc(e.vacationId);
+              batch.update(vacRef,
+                  {"applyStatusCd": codeStatus.acquired.statusCd});
+              batch.update(vacListRef,
+                  {"applyStatusCd": codeStatus.acquired.statusCd});
+            });
+            batch.commit().then(() => {
+              console.log("*** success *** update ***");
+            }).catch((error) => {
+              console.log("*** failure *** update ***");
+            });
+          }).catch((error) => {
+            console.log("*** failure *** update ***");
           });
-        });
-        const batch = db.batch();
-        vacation.forEach((e) => {
-          const vacListRef = db.collection("vacation").doc(e.vacationId);
-          const vacRef = db.collection("vacation").doc(e.uid)
-              .collection("vacationId").doc(e.vacationId);
-          batch.update(vacRef,
-              {"applyStatusCd": codeStatus.acquired.statusCd});
-          batch.update(vacListRef,
-              {"applyStatusCd": codeStatus.acquired.statusCd});
-        });
-        batch.commit().then(() => {
-          response.send("*** success *** update ***");
-        }).catch((error) => {
-          response.send("*** failure *** update ***");
-        });
-      }).catch((error) => {
-        response.send("*** failure *** update ***");
-      });
-});
+    });
+
+exports.addVacation = functions.pubsub
+    .schedule("0 0 * * *")
+    .timeZone("Asia/Tokyo")
+    .onRun((request, response) => {
+      const today = new Date();
+      // リージョン設定による時差を修正
+      today.setHours(today.getHours() + 9);
+      const todayStart = new Date(
+          today.getFullYear(), today.getMonth(), today.getDate());
+      const todayEnd = new Date(
+          today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+      db.collection("users")
+          .where("admin", "==", false).get()
+          .then((querySnapshot) => {
+            const staff = [];
+            querySnapshot.forEach((doc) => {
+              // 休暇付与日が本日のユーザー情報を取得
+              const addVacationDay = doc.get("addVacationDay").toDate();
+              addVacationDay.setHours(addVacationDay.getHours() + 9);
+              if (addVacationDay < todayStart || addVacationDay > todayEnd) {
+                return;
+              }
+              // 休暇付与後の残休暇日数を算出
+              let daysLeft = doc.get("daysLeft");
+              const addVacationDayYear = addVacationDay.getFullYear();
+              const todayYear = today.getFullYear();
+              const workLength = addVacationDayYear - todayYear;
+              if (workLength === 0) {
+                daysLeft += 10;
+              } else if (workLength === 1) {
+                daysLeft += 11;
+              } else if (workLength === 2) {
+                daysLeft += 12;
+              } else {
+                daysLeft += 20;
+              }
+              // 更新情報を生成
+              addVacationDay.setFullYear(addVacationDayYear + 1);
+              staff.push({
+                uid: doc.get("uid"),
+                daysLeft: daysLeft,
+                addVacationDay: addVacationDay,
+              });
+            });
+            const batch = db.batch();
+            staff.forEach((e) => {
+              const userRef = db.collection("users").doc(e.uid);
+              batch.update(userRef,
+                  {"daysLeft": e.daysLeft});
+              batch.update(userRef,
+                  {"addVacationDay": e.addVacationDay});
+            });
+            batch.commit().then(() => {
+              response.send("*** success *** update ***");
+            }).catch((error) => {
+              response.send("*** failure *** update ***");
+            });
+          }).catch((error) => {
+            response.send("*** failure *** update ***");
+          });
+    });

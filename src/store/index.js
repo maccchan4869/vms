@@ -66,7 +66,7 @@ export default createStore({
           staffName: item.staffName,
           email: item.email,
           joiningDate: new Date(item.joiningDate.year, item.joiningDate.month, item.joiningDate.day),
-          supplyHolidays: new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()),
+          addVacationDay: new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()),
           admin: item.admin,
           daysLeft: 0
         });
@@ -154,7 +154,7 @@ export default createStore({
             staffName: userDoc.get('staffName'), 
             email: userDoc.get('email'),
             joiningDate: userDoc.get('joiningDate').toDate(),
-            supplyHolidays: userDoc.get('supplyHolidays').toDate(),
+            addVacationDay: userDoc.get('addVacationDay').toDate(),
             admin: userDoc.get('admin'),
             daysLeft: userDoc.get('daysLeft')
           });
