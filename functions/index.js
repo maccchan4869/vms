@@ -125,6 +125,7 @@ exports.addVacation = functions.pubsub
               }
               // 更新情報を生成
               addVacationDay.setFullYear(addVacationDayYear + 1);
+              addVacationDay.setHours(today.getHours() - 9);
               staff.push({
                 uid: doc.get("uid"),
                 daysLeft: daysLeft,
