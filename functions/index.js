@@ -84,6 +84,7 @@ exports.updateApplyStatusCd = functions.pubsub
           }).catch((error) => {
             console.log("*** failure *** update ***");
           });
+      return 0;
     });
 
 exports.addVacation = functions.pubsub
@@ -139,11 +140,12 @@ exports.addVacation = functions.pubsub
                   {"addVacationDay": e.addVacationDay});
             });
             batch.commit().then(() => {
-              response.send("*** success *** update ***");
+              console.log("*** success *** update ***");
             }).catch((error) => {
-              response.send("*** failure *** update ***");
+              console.log("*** failure *** update ***");
             });
           }).catch((error) => {
-            response.send("*** failure *** update ***");
+            console.log("*** failure *** update ***");
           });
+      return 0;
     });
