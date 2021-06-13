@@ -21,7 +21,7 @@
               <input type="button" class="btn btn-light" value="経費申請" @click="linkExpenses">
             </li>
             <li class="nav-item" v-if="isLogin">
-              <input type="button" class="btn btn-danger" value="ログアウト" @click="clickLogout">
+              <input type="button" class="btn btn-secondary" value="ログアウト" @click="clickLogout">
             </li>
           </ul>
         </div>
