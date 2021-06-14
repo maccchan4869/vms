@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <nav class="navbar navbar-expand-lg">
-      <div class="container">
+      <div class="container-fluid common-header">
         <img alt="company logo" class="img_logo" src="../assets/logo.jpg">
         <div class="navbar-right">
           <ul class="nav navbar-nav">

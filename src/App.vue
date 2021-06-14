@@ -28,7 +28,6 @@ input[type="button"] {
   cursor: pointer;
 }
 
-
 .resultArea thead, .resultArea tbody {
   display:block;
 }
@@ -72,6 +71,9 @@ input[type="button"] {
   width: 130px !important;
 }
 
+.common-header {
+  height: 100%;
+}
 
 /* =============================================
 モーダル共通クラス
