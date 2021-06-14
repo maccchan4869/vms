@@ -1,6 +1,9 @@
 <template>
   <div class="Vacation container-fluid">
     <Header/>
+    <div class="row justify-content-center common-padding">
+      <div><label class="errorMessage">{{ errorMessage }}</label></div>
+    </div>
     <div class="row common-padding">
       <div class="container">
         <div class="row">
