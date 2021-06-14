@@ -6,19 +6,19 @@
         <div class="navbar-right">
           <ul class="nav navbar-nav">
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="ユーザー一覧" @click="linkUserList">
+              <router-link to="/admin/user">ユーザー一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="休暇一覧" @click="linkAdminVacation">
+              <router-link to="/admin/vacation">休暇一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="経費一覧" @click="linkAdminExpenses">
+              <router-link to="/admin/expenses">経費一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isStaff">
-              <input type="button" class="btn btn-light" value="休暇申請" @click="linkVacation">
+              <router-link to="/employee/vacation">休暇申請</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isStaff">
-              <input type="button" class="btn btn-light" value="経費申請" @click="linkExpenses">
+              <router-link to="/employee/expenses">経費申請</router-link>
             </li>
             <li class="nav-item" v-if="isLogin">
               <input type="button" class="btn btn-secondary" value="ログアウト" @click="clickLogout">
@@ -58,27 +58,7 @@ export default {
       } catch (error) {
         console.error(error.message);
       }
-    },
-    // ユーザー一覧へ遷移
-    linkUserList() {
-      this.$router.push('/admin/user');
-    },
-    // 休暇管理へ遷移
-    linkAdminVacation() {
-      this.$router.push('/admin/vacation');
-    },
-    // 経費管理へ遷移
-    linkAdminExpenses() {
-      this.$router.push('/admin/expenses');
-    },
-    // 休暇申請へ遷移
-    linkVacation() {
-      this.$router.push('/employee/vacation');
-    },
-    // 経費申請へ遷移
-    linkExpenses() {
-      this.$router.push('/employee/expenses');
-    },
+    }
   }
 }
 </script>
@@ -101,4 +81,17 @@ export default {
 .img_logo {
   height: 100%;
 }
+
+.router-link-active {
+  color: #34383b !important;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+a {
+  color: white !important;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
 </style>

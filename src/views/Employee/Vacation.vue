@@ -68,6 +68,7 @@ export default {
   },
   data () {
     return {
+      uid: '',
       daysLeft: 0,
       dispVacation: [],
       cancelItem: null,
@@ -85,6 +86,7 @@ export default {
     }
   },
   created() {
+    this.uid = this.$store.getters.getLoginUser.uid;
     this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
     this.codeStatus = definition.getCodeStatus();
     this.selectedYear = definition.getThisYear();
@@ -155,7 +157,9 @@ export default {
     async applyVacation(item) {
       try {
         await this.$store.dispatch('applyVacation', item);
+        await this.$store.dispatch('getStaff', this.uid);
         this.searchVacation();
+        this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '登録に失敗しました';
@@ -167,7 +171,9 @@ export default {
     async cancelVacation() {
       try {
         await this.$store.dispatch('cancelVacation', this.cancelItem);
+        await this.$store.dispatch('getStaff', this.uid);
         this.searchVacation();
+        this.daysLeft = this.$store.getters.getLoginUser.daysLeft;
         this.errorMessage = '';
       } catch (error) {
         this.errorMessage = '取消に失敗しました';
