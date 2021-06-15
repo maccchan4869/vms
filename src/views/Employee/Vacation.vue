@@ -46,27 +46,9 @@
         </table>
       </div>
     </div>
-    <div class="row common-padding">
+    <div class="row justify-content-center common-padding">
       <div class="container">
-        <nav aria-label="Page-navigation">
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous" @click.prevent.stop="backPage">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Previous</span>
-              </a>
-            </li>
-            <li class="page-item" v-for="index in maxPageIndex" :key="index">
-              <a class="page-link" href="#" @click.prevent.stop="setPage(index)">{{ index }}</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next" @click.prevent.stop="nextPage">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <Pagination :maxPageIndex="maxPageIndex" @back="backPage" @next="nextPage" @setPage="setPage"></Pagination>
       </div>
     </div>
     <transition-group  name="modal">
@@ -80,6 +62,7 @@
 import Header from '@/components/Header.vue'
 import AppVacationModal from '@/components/AppVacationModal.vue'
 import CancelModal from '@/components/CancelModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import definition from '@/helper/definition'
 
 export default {
@@ -87,7 +70,8 @@ export default {
   components: {
     Header,
     AppVacationModal,
-    CancelModal
+    CancelModal,
+    Pagination
   },
   data () {
     return {
