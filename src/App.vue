@@ -29,12 +29,16 @@ input[type="button"] {
 }
 
 .resultArea thead, .resultArea tbody {
-  display:block;
+  display: block;
 }
 
 .resultArea tbody {
   max-height: 60vh;
   overflow-y: scroll;
+}
+
+.resultArea tbody td {
+  height: 60px;
 }
 
 /* =============================================

@@ -80,7 +80,7 @@ export default {
       const endUnixTime = Date.parse(`${this.endDate} ${this.endTime}`);
       const startDatetime = new Date(startUnixTime);
       const endDatetime = new Date(endUnixTime);
-      const vacationDays = definition.getVacationDays(startDatetime, endDatetime);
+      const vacationDays = definition.getVacationDays(new Date(startUnixTime), endDatetime);
       if((vacationDays > staff.daysLeft && this.typeCd === this.typeOptions.oneDay.typeCd)
       || (vacationDays > staff.daysLeft && this.typeCd === this.typeOptions.halfDay.typeCd)) {
         this.errorMessage = '残休暇日数が足りません';
