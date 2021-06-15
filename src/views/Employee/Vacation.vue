@@ -46,11 +46,7 @@
         </table>
       </div>
     </div>
-    <div class="row justify-content-center common-padding">
-      <div class="container">
-        <Pagination :maxPageIndex="maxPageIndex" @back="backPage" @next="nextPage" @setPage="setPage"></Pagination>
-      </div>
-    </div>
+    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <AppVacationModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></AppVacationModal>
       <CancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></CancelModal>
@@ -168,21 +164,13 @@ export default {
     },
     // 最大ページ数を設定
     setMaxPageIndex() {
-      const isAddNextPage = this.vacation.length % 10 !== 0;
+      const isAddPage = this.vacation.length % 10 !== 0;
       const maxIndex = Math.floor(this.vacation.length / 10);
-      this.maxPageIndex = isAddNextPage ? maxIndex + 1 : maxIndex;
+      this.maxPageIndex = isAddPage ? maxIndex + 1 : maxIndex;
     },
     // ページネーション
     pagingVacation() {
       this.dispVacation = definition.pagingItems(this.vacation, this.nowPageIndex);
-    },
-    nextPage() {
-      this.nowPageIndex += 1;
-      this.pagingVacation();
-    },
-    backPage() {
-      this.nowPageIndex += -1;
-      this.pagingVacation();
     },
     setPage(index) {
       this.nowPageIndex = index;
