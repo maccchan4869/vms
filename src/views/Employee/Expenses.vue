@@ -41,6 +41,7 @@
         </table>
       </div>
     </div>
+    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <AppExpensesModal @close="closeExpensesModal" @apply="applyExpenses" v-if="isDispExpenses"></AppExpensesModal>
       <CancelModal @close="closeCancelModal" @cancel="cancelExpenses" v-if="isDispCancel"></CancelModal>
@@ -52,6 +53,7 @@
 import Header from '@/components/Header.vue'
 import AppExpensesModal from '@/components/AppExpensesModal.vue'
 import CancelModal from '@/components/CancelModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import definition from '@/helper/definition'
 
 export default {
@@ -59,10 +61,12 @@ export default {
   components: {
     Header,
     AppExpensesModal,
-    CancelModal
+    CancelModal,
+    Pagination
   },
   data () {
     return {
+      expenses: [],
       dispExpenses: [],
       cancelItem: null,
       codeStatus: null,
@@ -70,6 +74,8 @@ export default {
       yearOptions: [],
       isDispExpenses: false,
       isDispCancel: false,
+      nowPageIndex: 1,
+      maxPageIndex: 1,
       errorMessage: ''
     }
   },
@@ -111,8 +117,18 @@ export default {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       const expenses = this.$store.getters.getExpenses;
-      this.dispExpenses = expenses.filter(value => 
+      this.expenses = expenses.filter(value => 
         new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
+      this.maxPageIndex = definition.getMaxPageIndex(this.expenses.length);
+      this.pagingExpenses();
+    },
+    // ページネーション
+    pagingExpenses() {
+      this.dispExpenses = definition.pagingItems(this.expenses, this.nowPageIndex);
+    },
+    setPage(index) {
+      this.nowPageIndex = index;
+      this.pagingExpenses();
     },
     // 経費申請
     async applyExpenses(param) {

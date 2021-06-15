@@ -53,6 +53,7 @@
         </table>
       </div>
     </div>
+    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <ExpensesDetailModal :val="targetExpenses" @close="closeDetailModal" @approve="approveExpenses" @reject="rejectExpenses" v-if="isDispDetail"></ExpensesDetailModal>
     </transition-group >
@@ -62,16 +63,19 @@
 <script>
 import Header from '@/components/Header.vue'
 import ExpensesDetailModal from '@/components/ExpensesDetailModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import definition from '@/helper/definition'
 
 export default {
   name: 'Expenses',
   components: {
     Header,
-    ExpensesDetailModal
+    ExpensesDetailModal,
+    Pagination
   },
   data () {
     return {
+      expenses: [],
       dispExpenses: [],
       targetExpenses: null,
       codeStatus: null,
@@ -88,6 +92,8 @@ export default {
         acquired: '3',
         all: '4'
       },
+      nowPageIndex: 1,
+      maxPageIndex: 1,
       errorMessage: ''
     }
   },
@@ -130,13 +136,24 @@ export default {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
 
-      const expenses = this.$store.getters.getExpenses;
-      this.dispExpenses = expenses.filter(value => 
+      this.expenses = this.$store.getters.getExpenses;
+      this.expenses = this.expenses.filter(value => 
         new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
-      this.dispExpenses = this.dispExpenses.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.expensesSearchKey.all);
+      this.expenses = this.expenses.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.expensesSearchKey.all);
       if (this.selectedUid) {
-        this.dispExpenses = this.dispExpenses.filter(x => x.uid === this.selectedUid);
+        this.expenses = this.expenses.filter(x => x.uid === this.selectedUid);
       }
+      this.maxPageIndex = definition.getMaxPageIndex(this.expenses.length);
+      this.pagingExpenses();
+
+    },
+    // ページネーション
+    pagingExpenses() {
+      this.dispExpenses = definition.pagingItems(this.expenses, this.nowPageIndex);
+    },
+    setPage(index) {
+      this.nowPageIndex = index;
+      this.pagingExpenses();
     },
     // 承認,却下
     async changeExpensesStatusCd(expenses, statusCd, reason = '') {
