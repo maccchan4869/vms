@@ -45,12 +45,13 @@
           </tbody>
         </table>
       </div>
+    </div>
+    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <RegisterUserModal @close="closeRegisterModal" @register="registerAccount" v-if="isDispRegister"></RegisterUserModal>
       <DeleteUserModal @close="closeDeleteModal" @delete="deleteAccount" v-if="isDispDelete"></DeleteUserModal>
       <EditUserModal :val="targetStaff" @close="closeEditModal" @edit="editAccount" v-if="isDispEdit"></EditUserModal>
     </transition-group >
-    </div>
   </div>
   
 </template>
@@ -60,6 +61,7 @@ import Header from '@/components/Header.vue'
 import RegisterUserModal from '@/components/RegisterUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue'
 import EditUserModal from '@/components/EditUserModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import definition from '@/helper/definition'
 
 export default {
@@ -68,10 +70,10 @@ export default {
     Header,
     RegisterUserModal,
     DeleteUserModal,
-    EditUserModal
+    EditUserModal,
+    Pagination
   },
   created() {
-    this.staffs = this.$store.getters.getStaffs;
     this.searchUser();
   },
   data () {
@@ -93,7 +95,9 @@ export default {
       errorMessage: '',
       isDispRegister: false,
       isDispDelete: false,
-      isDispEdit: false
+      isDispEdit: false,
+      nowPageIndex: 1,
+      maxPageIndex: 1,
     }
   },
   methods: {
@@ -127,18 +131,30 @@ export default {
       else return `${staff.daysLeft}日`;
     },
     searchUser() {
+      this.nowPageIndex = 1;
+      const staffList = this.$store.getters.getStaffs;
       switch (this.searchKey) {
         case this.useSearchKey.all:
-          this.dispStaffs = this.staffs;
+          this.staffs = staffList;
           break;
         case this.useSearchKey.admin:
-          this.dispStaffs = this.staffs.filter(x => x.admin);
+          this.staffs = staffList.filter(x => x.admin);
           break;
         case this.useSearchKey.staff:
-          this.dispStaffs = this.staffs.filter(x => !x.admin);
+          this.staffs = staffList.filter(x => !x.admin);
           break;
       }
+      this.maxPageIndex = definition.getMaxPageIndex(this.staffs.length);
       this.sortUser();
+      this.pagingStaff();
+    },
+    // ページネーション
+    pagingStaff() {
+      this.dispStaffs = definition.pagingItems(this.staffs, this.nowPageIndex);
+    },
+    setPage(index) {
+      this.nowPageIndex = index;
+      this.pagingStaff();
     },
     // ソート機能
     sortUser() {

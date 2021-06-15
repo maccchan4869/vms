@@ -166,8 +166,11 @@ const pagingItems = (listItems, nowPageIndex) => {
  * @param {integer} listLength リストの長さ
  */
  const getMaxPageIndex = (listLength) => {
-  const isAddPage = listLength % 10 !== 0;
-  const maxIndex = Math.floor(listLength / 10);
+   if (listLength <= maxDispNo) {
+     return 0;
+   }
+  const isAddPage = listLength % maxDispNo !== 0;
+  const maxIndex = Math.floor(listLength / maxDispNo);
   return isAddPage ? maxIndex + 1 : maxIndex;
 }
 

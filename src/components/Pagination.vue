@@ -1,11 +1,11 @@
 <template>
 <div class="row common-padding">
-  <div class="container">
+  <div class="container" v-if="isDisp(maxPageIndex)">
     <nav aria-label="Page-navigation">
       <ul class="pagination justify-content-center">
         <li class="page-item">
           <a class="page-link" href="#" aria-label="Previous" @click.prevent.stop="backPage"
-          :class="{disabled: backDisabled(maxPageIndex)}">
+          :class="{disabled: backDisabled()}">
             <span aria-hidden="true">&laquo;</span>
             <span class="sr-only">Previous</span>
           </a>
@@ -36,6 +36,13 @@ export default {
     }
   },
   methods: {
+    isDisp(maxPageIndex) {
+      if (maxPageIndex === 0) {
+        this.nowPageIndex = 1;
+        return false;
+      }
+      return true;
+    },
     setPage(index) {
       this.nowPageIndex = index;
       this.$emit('setPage', this.nowPageIndex);
@@ -48,11 +55,11 @@ export default {
       this.nowPageIndex += -1;
       this.$emit('setPage', this.nowPageIndex);
     },
-    backDisabled(maxPageIndex) {
-      return this.nowPageIndex === 1 || maxPageIndex === 0;
+    backDisabled() {
+      return this.nowPageIndex === 1;
     },
     nextDisabled(maxPageIndex) {
-      return maxPageIndex === 1 || this.nowPageIndex === maxPageIndex || maxPageIndex === 0;
+      return maxPageIndex === 1 || this.nowPageIndex === maxPageIndex;
     },
     isSelect(index) {
       return this.nowPageIndex === index;
