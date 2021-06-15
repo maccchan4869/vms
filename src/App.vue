@@ -33,7 +33,7 @@ input[type="button"] {
 }
 
 .resultArea tbody {
-  max-height: 70vh;
+  max-height: 60vh;
   overflow-y: scroll;
 }
 

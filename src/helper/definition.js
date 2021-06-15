@@ -143,4 +143,22 @@ const getThisYear = () => {
   return (diffTime === 0 ? diffDay + halfDay : diffDay + oneDay);
 }
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions, getVacationDays };
+/**
+ * ページネーション
+ * @param {object}  listItems    データリスト
+ * @param {integer} nowPageIndex 現在のページ
+ */
+const pagingItems = (listItems, nowPageIndex) => {
+  // 最大表示数は10件とする
+  const maxDispNo = 10;
+  const firstIndex = (nowPageIndex - 1) * maxDispNo;
+  const lastIndex = firstIndex + maxDispNo;
+  const items = [];
+  listItems.forEach((e, i) => {
+    if (i < firstIndex || i >= lastIndex) return;
+    items.push(e);
+  })
+  return items;
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions, getVacationDays, pagingItems };

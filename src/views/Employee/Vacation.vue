@@ -46,6 +46,29 @@
         </table>
       </div>
     </div>
+    <div class="row common-padding">
+      <div class="container">
+        <nav aria-label="Page-navigation">
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous" @click.prevent.stop="backPage">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <li class="page-item" v-for="index in maxPageIndex" :key="index">
+              <a class="page-link" href="#" @click.prevent.stop="setPage(index)">{{ index }}</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next" @click.prevent.stop="nextPage">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
     <transition-group  name="modal">
       <AppVacationModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></AppVacationModal>
       <CancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></CancelModal>
@@ -70,6 +93,7 @@ export default {
     return {
       uid: '',
       daysLeft: 0,
+      vacation: [],
       dispVacation: [],
       cancelItem: null,
       isDispVacation: false,
@@ -83,6 +107,9 @@ export default {
       },
       selectedYear: 0,
       yearOptions: [],
+      nowPageIndex: 1,
+      maxPageIndex: 1,
+      errorMessage: '' 
     }
   },
   created() {
@@ -149,9 +176,33 @@ export default {
     searchVacation() {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
-      const vacation = this.$store.getters.getVacation;
-      this.dispVacation = vacation.filter(value => 
+      const vacationList = this.$store.getters.getVacation;
+      this.vacation = vacationList.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
+      this.setMaxPageIndex();
+      this.pagingVacation();
+    },
+    // 最大ページ数を設定
+    setMaxPageIndex() {
+      const isAddNextPage = this.vacation.length % 10 !== 0;
+      const maxIndex = Math.floor(this.vacation.length / 10);
+      this.maxPageIndex = isAddNextPage ? maxIndex + 1 : maxIndex;
+    },
+    // ページネーション
+    pagingVacation() {
+      this.dispVacation = definition.pagingItems(this.vacation, this.nowPageIndex);
+    },
+    nextPage() {
+      this.nowPageIndex += 1;
+      this.pagingVacation();
+    },
+    backPage() {
+      this.nowPageIndex += -1;
+      this.pagingVacation();
+    },
+    setPage(index) {
+      this.nowPageIndex = index;
+      this.pagingVacation();
     },
     // 休暇を申請
     async applyVacation(item) {
