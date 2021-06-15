@@ -12,6 +12,8 @@ const codeStatus = {
   acquired: {statusCd: '3', statusName: '取得済み'},
 };
 
+const maxDispNo = 10;
+
 /**
  * 休暇申請種別名を取得
  * 
@@ -149,8 +151,6 @@ const getThisYear = () => {
  * @param {integer} nowPageIndex 現在のページ
  */
 const pagingItems = (listItems, nowPageIndex) => {
-  // 最大表示数は10件とする
-  const maxDispNo = 10;
   const firstIndex = (nowPageIndex - 1) * maxDispNo;
   const lastIndex = firstIndex + maxDispNo;
   const items = [];
@@ -161,4 +161,14 @@ const pagingItems = (listItems, nowPageIndex) => {
   return items;
 }
 
-export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions, getVacationDays, pagingItems };
+/**
+ * ページネーションの最大値を取得
+ * @param {integer} listLength リストの長さ
+ */
+ const getMaxPageIndex = (listLength) => {
+  const isAddPage = listLength % 10 !== 0;
+  const maxIndex = Math.floor(listLength / 10);
+  return isAddPage ? maxIndex + 1 : maxIndex;
+}
+
+export default { setTypeName, setStatusName, setDate, setTime, getCodeStatus, getCodeType, getThisYear, getYearOptions, getStaffOptions, getVacationDays, pagingItems, getMaxPageIndex };

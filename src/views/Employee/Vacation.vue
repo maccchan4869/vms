@@ -159,14 +159,8 @@ export default {
       const vacationList = this.$store.getters.getVacation;
       this.vacation = vacationList.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
-      this.setMaxPageIndex();
+      this.maxPageIndex = definition.getMaxPageIndex(this.vacation.length);
       this.pagingVacation();
-    },
-    // 最大ページ数を設定
-    setMaxPageIndex() {
-      const isAddPage = this.vacation.length % 10 !== 0;
-      const maxIndex = Math.floor(this.vacation.length / 10);
-      this.maxPageIndex = isAddPage ? maxIndex + 1 : maxIndex;
     },
     // ページネーション
     pagingVacation() {

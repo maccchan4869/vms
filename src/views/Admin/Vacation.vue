@@ -53,6 +53,7 @@
         </table>
       </div>
     </div>
+    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <VacationDetailModal :val="targetVacation" @close="closeDetailModal" @approve="approveVacation" @reject="rejectVacation" v-if="isDispDetail"></VacationDetailModal>
     </transition-group >
@@ -62,13 +63,15 @@
 <script>
 import Header from '@/components/Header.vue'
 import VacationDetailModal from '@/components/VacationDetailModal.vue'
+import Pagination from '@/components/Pagination.vue'
 import definition from '@/helper/definition'
 
 export default {
   name: 'Vacation',
   components: {
     Header,
-    VacationDetailModal
+    VacationDetailModal,
+    Pagination
   },
   created () {
     const staffs =  this.$store.getters.getStaffs;
@@ -80,6 +83,7 @@ export default {
   },
   data () {
     return {
+      vacation: [],
       dispVacation: [],
       targetVacation: null,
       codeStatus: null,
@@ -96,6 +100,8 @@ export default {
       selectedYear: 0,
       yearOptions: [],
       isDispDetail: false,
+      nowPageIndex: 1,
+      maxPageIndex: 1,
       errorMessage: ''
     }
   },
@@ -111,6 +117,14 @@ export default {
     },
     setTime(datetime) {
       return definition.setTime(datetime);
+    },
+    // ページネーション
+    pagingVacation() {
+      this.dispVacation = definition.pagingItems(this.vacation, this.nowPageIndex);
+    },
+    setPage(index) {
+      this.nowPageIndex = index;
+      this.pagingVacation();
     },
     openDetailModal(vacation) {
       this.targetVacation = vacation;
@@ -128,12 +142,15 @@ export default {
     },
     // 検索
     async searchVacation() {
+      this.nowPageIndex = 1;
       await this.$store.dispatch('getVacationList', {
         year: this.selectedYear,
         targetUid: this.selectedUid
       });
-      const vacation = this.$store.getters.getVacation;
-      this.dispVacation = vacation.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
+      const vacationList = this.$store.getters.getVacation;
+      this.vacation = vacationList.filter(x => x.applyStatusCd === this.searchKey || this.searchKey === this.vacationSearchKey.all);
+      this.maxPageIndex = definition.getMaxPageIndex(this.vacation.length);
+      this.pagingVacation();
     },
     // 承認,却下
     async changeVacationStatusCd(vacation, statusCd, reason = '') {

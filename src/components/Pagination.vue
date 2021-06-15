@@ -4,7 +4,8 @@
     <nav aria-label="Page-navigation">
       <ul class="pagination justify-content-center">
         <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous" @click.prevent.stop="backPage" :class="{disabled: backDisabled()}">
+          <a class="page-link" href="#" aria-label="Previous" @click.prevent.stop="backPage"
+          :class="{disabled: backDisabled(maxPageIndex)}">
             <span aria-hidden="true">&laquo;</span>
             <span class="sr-only">Previous</span>
           </a>
@@ -47,11 +48,11 @@ export default {
       this.nowPageIndex += -1;
       this.$emit('setPage', this.nowPageIndex);
     },
-    backDisabled() {
-      return this.nowPageIndex === 1;
+    backDisabled(maxPageIndex) {
+      return this.nowPageIndex === 1 || maxPageIndex === 0;
     },
     nextDisabled(maxPageIndex) {
-      return maxPageIndex === 1 || this.nowPageIndex === maxPageIndex;
+      return maxPageIndex === 1 || this.nowPageIndex === maxPageIndex || maxPageIndex === 0;
     },
     isSelect(index) {
       return this.nowPageIndex === index;
