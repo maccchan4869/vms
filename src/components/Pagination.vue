@@ -10,7 +10,7 @@
           </a>
         </li>
         <li class="page-item" v-for="index in maxPageIndex" :key="index">
-          <a class="page-link" href="#" @click.prevent.stop="setPage(index)">{{ index }}</a>
+          <a class="page-link" href="#" @click.prevent.stop="setPage(index)" :class="{selected: isSelect(index)}">{{ index }}</a>
         </li>
         <li class="page-item">
           <a class="page-link" href="#" aria-label="Next" @click.prevent.stop="nextPage"
@@ -52,6 +52,9 @@ export default {
     },
     nextDisabled(maxPageIndex) {
       return maxPageIndex === 1 || this.nowPageIndex === maxPageIndex;
+    },
+    isSelect(index) {
+      return this.nowPageIndex === index;
     }
   }
 }
@@ -61,5 +64,9 @@ export default {
 .disabled {
   color: darkgrey;
   pointer-events: none;
+}
+.selected {
+  font-weight: bold;
+  border-radius: 6px;
 }
 </style>
