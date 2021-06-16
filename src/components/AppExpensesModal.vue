@@ -104,14 +104,13 @@ export default {
         this.errorMessage = '領収書等の画像を添付してください';
         return;
       }
-      console.log(this.image);
-      /* this.$emit('apply', {
+      this.$emit('apply', {
         useDate: this.useDate,
         money: this.money,
         applyStatusCd: this.codeStatus.applying.statusCd,
         memo: this.memo,
         image: this.image
-      }); */
+      });
     }
   }
 }
