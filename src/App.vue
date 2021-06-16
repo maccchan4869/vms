@@ -80,7 +80,7 @@ input[type="button"] {
 }
 
 .resultArea {
-  height: 52vh;
+  min-height: 52vh;
 }
 
 /* =============================================
