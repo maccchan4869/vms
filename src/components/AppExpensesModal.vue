@@ -75,6 +75,10 @@ export default {
     async onImageChange (e) {
       try {
         const inputFile = e.target.files || e.dataTransfer.files;
+        if (typeof inputFile[0] === 'undefined') {
+          this.image = '';
+          return;
+        }
         this.image = await this.getBase64(inputFile[0]);
         this.errorMessage = '';
       } catch (error) {
@@ -100,13 +104,14 @@ export default {
         this.errorMessage = '領収書等の画像を添付してください';
         return;
       }
-      this.$emit('apply', {
+      console.log(this.image);
+      /* this.$emit('apply', {
         useDate: this.useDate,
         money: this.money,
         applyStatusCd: this.codeStatus.applying.statusCd,
         memo: this.memo,
         image: this.image
-      });
+      }); */
     }
   }
 }
