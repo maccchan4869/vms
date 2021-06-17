@@ -7,15 +7,14 @@
     <div class="row common-padding">
       <div class="container">
         <div class="row">
-          <div class="col-lg-12 text-right">
-            <label class="mx-2">検索</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" @change="searchUser" value="1" checked>全て</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" @change="searchUser" value="2">管理者</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" @change="searchUser" value="3">スタッフ</label>
-            <label class="mx-2">ソート</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortUser" value="1" checked>スタッフ名</label>
-            <label class="mx-2"><input class="mr-1" type="radio" name="sort" v-model="sortKey" @change="sortUser" value="2">入社日</label>
+          <div class="col-lg-2">
             <input type="button" class="btn btn-primary" value="新規追加" @click="openRegisterModal()">
+          </div>
+          <div class="col-lg-10 text-right">
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="1" checked>全て</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="2">管理者</label>
+            <label class="mx-2"><input class="mr-1" type="radio" name="search" v-model="searchKey" value="3">スタッフ</label>
+            <input type="button" class="btn btn-primary" value="検索" @click="searchUser">
           </div>
         </div>
       </div>
@@ -87,11 +86,6 @@ export default {
         admin: '2',
         staff: '3'
       },
-      sortKey: '1',
-      userSortKey: {
-        staffName: '1',
-        joiningDate: '2'
-      },
       errorMessage: '',
       isDispRegister: false,
       isDispDelete: false,
@@ -145,7 +139,6 @@ export default {
           break;
       }
       this.maxPageIndex = definition.getMaxPageIndex(this.staffs.length);
-      this.sortUser();
       this.pagingStaff();
     },
     // ページネーション
@@ -155,23 +148,6 @@ export default {
     setPage(index) {
       this.nowPageIndex = index;
       this.pagingStaff();
-    },
-    // ソート機能
-    sortUser() {
-      switch (this.sortKey) {
-        case this.userSortKey.staffName:
-          this.dispStaffs.sort( (a, b) => {
-            if(a.staffName > b.staffName) return 1;
-            if(a.staffName < b.staffName) return -1;
-          });
-          break;
-        case this.userSortKey.joiningDate:
-          this.dispStaffs.sort( (a, b) => {
-            if(a.joiningDate > b.joiningDate) return 1;
-            if(a.joiningDate < b.joiningDate) return -1;
-          });
-          break;
-      }
     },
     // アカウントを作成
     async registerAccount(item) {

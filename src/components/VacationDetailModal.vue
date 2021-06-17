@@ -4,8 +4,10 @@
     <div class="row justify-content-center common-padding">
       <div><label class="errorMessage">{{ errorMessage }}</label></div>
     </div>
-    <div class="row align-items-center justify-content-end">
-      <input type="button" class="btn btn-danger" value="閉じる" @click="$emit('close')">
+    <div class="row align-items-center">
+      <div class="col-11 text-right">
+        <input type="button mr-5" class="btn-icon" @click="$emit('close')">
+      </div>
     </div>
     <div class="row align-items-center justify-content-center mt-1">
       <table class="table-bordered">

@@ -83,6 +83,17 @@ input[type="button"] {
   min-height: 52vh;
 }
 
+.btn-icon {
+  background-image: url('assets/close.svg');
+  background-color: white;
+  background-repeat: no-repeat;
+  width: 30px !important;
+  height: 30px;
+	border: none;
+	outline: none;
+  cursor: pointer;
+}
+
 /* =============================================
 モーダル共通クラス
 ============================================= */
