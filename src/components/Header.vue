@@ -42,7 +42,6 @@ export default {
     }
   },
   created() {
-    console.log(this.nowNavi);
     const loginUser = this.$store.getters.getLoginUser;
     this.isLogin = loginUser.uid !== '';
     this.isAdmin = loginUser.admin && this.isLogin;

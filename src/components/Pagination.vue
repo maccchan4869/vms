@@ -38,7 +38,7 @@ export default {
   methods: {
     isDisp(maxPageIndex) {
       if (maxPageIndex === 0) {
-        this.nowPageIndex = 1;
+        this.resetPageIndex();
         return false;
       }
       return true;
@@ -63,6 +63,9 @@ export default {
     },
     isSelect(index) {
       return this.nowPageIndex === index;
+    },
+    resetPageIndex() {
+      this.nowPageIndex = 1;
     }
   }
 }
