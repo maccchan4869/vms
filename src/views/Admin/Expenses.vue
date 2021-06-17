@@ -53,7 +53,7 @@
         </table>
       </div>
     </div>
-    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
+    <Pagination ref="pagination" :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <ExpensesDetailModal :val="targetExpenses" @close="closeDetailModal" @approve="approveExpenses" @reject="rejectExpenses" v-if="isDispDetail"></ExpensesDetailModal>
     </transition-group >
@@ -133,9 +133,9 @@ export default {
     },
     // 検索
     searchExpenses() {
+      this.resetPageIndex();
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
-
       this.expenses = this.$store.getters.getExpenses;
       this.expenses = this.expenses.filter(value => 
         new Date(value.useDate).getTime() >= firstDay.getTime() && new Date(value.useDate).getTime() < finalDay.getTime());
@@ -154,6 +154,13 @@ export default {
     setPage(index) {
       this.nowPageIndex = index;
       this.pagingExpenses();
+    },
+    resetPageIndex() {
+      this.nowPageIndex = 1;
+      // 初期表示時は、resetPageIndexをスキップする
+      if (typeof this.$refs.pagination !== 'undefined') {
+        this.$refs.pagination.resetPageIndex();
+      }
     },
     // 承認,却下
     async changeExpensesStatusCd(expenses, statusCd, reason = '') {

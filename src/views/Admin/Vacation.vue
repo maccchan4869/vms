@@ -53,7 +53,7 @@
         </table>
       </div>
     </div>
-    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
+    <Pagination ref="pagination" :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <VacationDetailModal :val="targetVacation" @close="closeDetailModal" @approve="approveVacation" @reject="rejectVacation" v-if="isDispDetail"></VacationDetailModal>
     </transition-group >
@@ -126,6 +126,13 @@ export default {
       this.nowPageIndex = index;
       this.pagingVacation();
     },
+    resetPageIndex() {
+      this.nowPageIndex = 1;
+      // 初期表示時は、resetPageIndexをスキップする
+      if (typeof this.$refs.pagination !== 'undefined') {
+        this.$refs.pagination.resetPageIndex();
+      }
+    },
     openDetailModal(vacation) {
       this.targetVacation = vacation;
       this.isDispDetail = true;
@@ -142,7 +149,7 @@ export default {
     },
     // 検索
     async searchVacation() {
-      this.nowPageIndex = 1;
+      this.resetPageIndex();
       await this.$store.dispatch('getVacationList', {
         year: this.selectedYear,
         targetUid: this.selectedUid

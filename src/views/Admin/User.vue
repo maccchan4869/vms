@@ -45,7 +45,7 @@
         </table>
       </div>
     </div>
-    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
+    <Pagination ref="pagination" :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <RegisterUserModal @close="closeRegisterModal" @register="registerAccount" v-if="isDispRegister"></RegisterUserModal>
       <DeleteUserModal @close="closeDeleteModal" @delete="deleteAccount" v-if="isDispDelete"></DeleteUserModal>
@@ -125,7 +125,7 @@ export default {
       else return `${staff.daysLeft}日`;
     },
     searchUser() {
-      this.nowPageIndex = 1;
+      this.resetPageIndex();
       const staffList = this.$store.getters.getStaffs;
       switch (this.searchKey) {
         case this.useSearchKey.all:
@@ -148,6 +148,13 @@ export default {
     setPage(index) {
       this.nowPageIndex = index;
       this.pagingStaff();
+    },
+    resetPageIndex() {
+      this.nowPageIndex = 1;
+      // 初期表示時は、resetPageIndexをスキップする
+      if (typeof this.$refs.pagination !== 'undefined') {
+        this.$refs.pagination.resetPageIndex();
+      }
     },
     // アカウントを作成
     async registerAccount(item) {
