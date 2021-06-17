@@ -37,11 +37,7 @@ export default {
   },
   methods: {
     isDisp(maxPageIndex) {
-      if (maxPageIndex === 0) {
-        this.resetPageIndex();
-        return false;
-      }
-      return true;
+      return maxPageIndex !== 0;
     },
     setPage(index) {
       this.nowPageIndex = index;
