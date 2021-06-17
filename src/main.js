@@ -3,8 +3,14 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import firebase from 'firebase'
+import '@babel/polyfill'
+import 'mutationobserver-shim'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+// 下記はVue3では使用不可
+// import './plugins/bootstrap-vue'
+// import './plugins/bootstrap-vue'
 
 createApp(App).use(store).use(router).mount('#app')
 

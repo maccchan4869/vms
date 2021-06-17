@@ -4,24 +4,24 @@
       <div class="container-fluid common-header">
         <img alt="company logo" class="img_logo" src="../assets/logo.jpg">
         <div class="navbar-right">
-          <ul class="nav navbar-nav">
+          <ul class="nav nav-pills navi-list">
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="ユーザー一覧" @click="linkUserList">
+              <router-link to="/admin/user" class="page-link">ユーザー一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="休暇一覧" @click="linkAdminVacation">
+              <router-link to="/admin/vacation" class="page-link">休暇一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isAdmin">
-              <input type="button" class="btn btn-light" value="経費一覧" @click="linkAdminExpenses">
+              <router-link to="/admin/expenses" class="page-link">経費一覧</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isStaff">
-              <input type="button" class="btn btn-light" value="休暇申請" @click="linkVacation">
+              <router-link to="/employee/vacation" class="page-link">休暇申請</router-link>
             </li>
             <li class="nav-item mr-3" v-if="isStaff">
-              <input type="button" class="btn btn-light" value="経費申請" @click="linkExpenses">
+              <router-link to="/employee/expenses" class="page-link">経費申請</router-link>
             </li>
             <li class="nav-item" v-if="isLogin">
-              <input type="button" class="btn btn-secondary" value="ログアウト" @click="clickLogout">
+              <a class="page-link" href="#" @click.prevent.stop="clickLogout">ログアウト</a>
             </li>
           </ul>
         </div>
@@ -42,6 +42,7 @@ export default {
     }
   },
   created() {
+    console.log(this.nowNavi);
     const loginUser = this.$store.getters.getLoginUser;
     this.isLogin = loginUser.uid !== '';
     this.isAdmin = loginUser.admin && this.isLogin;
@@ -58,34 +59,14 @@ export default {
       } catch (error) {
         console.error(error.message);
       }
-    },
-    // ユーザー一覧へ遷移
-    linkUserList() {
-      this.$router.push('/admin/user');
-    },
-    // 休暇管理へ遷移
-    linkAdminVacation() {
-      this.$router.push('/admin/vacation');
-    },
-    // 経費管理へ遷移
-    linkAdminExpenses() {
-      this.$router.push('/admin/expenses');
-    },
-    // 休暇申請へ遷移
-    linkVacation() {
-      this.$router.push('/employee/vacation');
-    },
-    // 経費申請へ遷移
-    linkExpenses() {
-      this.$router.push('/employee/expenses');
-    },
+    }
   }
 }
 </script>
 
 <style scoped>
 .header {
-  background-color: #AAAFB1;
+  background-color: black;
   width: 100%;
   height: 70px;
 }
@@ -101,4 +82,19 @@ export default {
 .img_logo {
   height: 100%;
 }
+
+.navi-list a {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.navi-list a.router-link-exact-active {
+  color: black;
+  background-color: white;
+  border: none;
+  border-radius: 4px;
+}
+
 </style>
