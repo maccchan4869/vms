@@ -46,7 +46,7 @@
         </table>
       </div>
     </div>
-    <Pagination :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
+    <Pagination ref="pagination" :maxPageIndex="maxPageIndex" @setPage="setPage"></Pagination>
     <transition-group  name="modal">
       <AppVacationModal @close="closeVacationModal" @apply="applyVacation" v-if="isDispVacation"></AppVacationModal>
       <CancelModal @close="closeCancelModal" @cancel="cancelVacation" v-if="isDispCancel"></CancelModal>
@@ -131,26 +131,29 @@ export default {
     },
     // ソート機能
     sortVacation() {
+      this.resetPageIndex();
       switch (this.sortKey) {
         case this.vacationSortKey.startDay:
-          this.dispVacation.sort( (a, b) => {
+          this.vacation.sort( (a, b) => {
             if(a.startDatetime > b.startDatetime) return -1;
             if(a.startDatetime < b.startDatetime) return 1;
           });
           break;
         case this.vacationSortKey.typeCd:
-          this.dispVacation.sort( (a, b) => {
+          this.vacation.sort( (a, b) => {
             if(a.typeCd > b.typeCd) return 1;
             if(a.typeCd < b.typeCd) return -1;
           });
           break;
         case this.vacationSortKey.applyStatusCd:
-          this.dispVacation.sort( (a, b) => {
+          this.vacation.sort( (a, b) => {
             if(a.applyStatusCd > b.applyStatusCd) return 1;
             if(a.applyStatusCd < b.applyStatusCd) return -1;
           });
           break;
       }
+      this.maxPageIndex = definition.getMaxPageIndex(this.vacation.length);
+      this.pagingVacation();
     },
     // 検索機能
     searchVacation() {
@@ -159,8 +162,7 @@ export default {
       const vacationList = this.$store.getters.getVacation;
       this.vacation = vacationList.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
-      this.maxPageIndex = definition.getMaxPageIndex(this.vacation.length);
-      this.pagingVacation();
+      this.sortVacation();
     },
     // ページネーション
     pagingVacation() {
@@ -169,6 +171,13 @@ export default {
     setPage(index) {
       this.nowPageIndex = index;
       this.pagingVacation();
+    },
+    resetPageIndex() {
+      this.nowPageIndex = 1;
+      // 初期表示時は、resetPageIndexをスキップする
+      if (typeof this.$refs.pagination !== 'undefined') {
+        this.$refs.pagination.resetPageIndex();
+      }
     },
     // 休暇を申請
     async applyVacation(item) {
