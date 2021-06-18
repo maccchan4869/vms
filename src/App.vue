@@ -60,15 +60,15 @@ input[type="button"] {
 }
 
 .width-8 {
- width: 8rem;
+  width: 8rem;
 }
 
 .width-12 {
- width: 12rem;
+  width: 12rem;
 }
 
 .width-20 {
- width: 20rem;
+  width: 20rem;
 }
 
 .btn-light {
@@ -77,10 +77,6 @@ input[type="button"] {
 
 .common-header {
   height: 100%;
-}
-
-.resultArea {
-  min-height: 52vh;
 }
 
 .btn-icon {
