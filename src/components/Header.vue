@@ -52,7 +52,7 @@ export default {
     async clickLogout() {
       try {
         await firebase.auth().signOut();
-        this.$store.commit('commitLoginUser', {uid: '', staffName: '', admin: false});
+        this.$store.dispatch('logout');
         console.log('ログアウトしました');
         this.$router.push('/');
       } catch (error) {

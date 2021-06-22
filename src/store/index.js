@@ -8,7 +8,8 @@ const initState = {
   loginUser: {
     uid: '',
     staffName: '',
-    admin: false
+    admin: false,
+    daysLeft: 0
   },
   vacation: [],
   expenses: [],
@@ -23,29 +24,27 @@ export default createStore({
     commitLoginUser(state, val) {
       state.loginUser = val;
     },
-    commitVacationInfo(state, val) {
-      state.vacationInfo = val;
-    },
     commitVacation(state, val) {
       state.vacation = val;
-    },
-    commitStaffs(state, val) {
-      state.staffs = val; 
     },
     commitExpenses(state, val) {
       state.expenses = val; 
     },
-    commitImageUrl(state, val) {
-      state.imageUrl = val;
+    commitStaffs(state, val) {
+      state.staffs = val; 
     },
     commitMailingList(state, val) {
       state.mailingList = val;
+    },
+    commitImageUrl(state, val) {
+      state.imageUrl = val;
     },
   },
   actions: {
     // ログイン
     async login({ dispatch }, {email, password}) {
       try {
+        localStorage.setItem('initState', JSON.stringify(initState));
         await firebase.auth().signInWithEmailAndPassword(email, password);
         const uid = firebase.auth().currentUser.uid;
         await dispatch('getStaff', uid);
@@ -494,6 +493,16 @@ export default createStore({
       } catch (error) {
         throw error.message;
       }
+    },
+
+    // ログアウト処理
+    logout({ commit }) {
+      const initialState = JSON.parse(localStorage.getItem('initState'));
+      commit('commitLoginUser', initialState.loginUser);
+      commit('commitVacation', initialState.vacation);
+      commit('commitExpenses', initialState.expenses);
+      commit('commitMailingList', initialState.mailingList);
+      commit('commitImageUrl', initialState.imageUrl);
     },
   },
   modules: {
