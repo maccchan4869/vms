@@ -60,10 +60,11 @@ const setTypeName = (typeCd) => {
  * @param {datetime} datetime 時刻
  */
 const setDate = (datetime) => {
-  let format = 'YYYY年MM月DD日'
-  format = format.replace(/YYYY/, datetime.getFullYear());
-  format = format.replace(/MM/, ('0' + (datetime.getMonth() + 1)).slice(-2));
-  format = format.replace(/DD/, ('0' + datetime.getDate()).slice(-2));
+  let format = 'YYYY年MM月DD日';
+  const value = typeof(datetime) === 'string' ? new Date(datetime) : datetime;
+  format = format.replace(/YYYY/, value.getFullYear());
+  format = format.replace(/MM/, ('0' + (value.getMonth() + 1)).slice(-2));
+  format = format.replace(/DD/, ('0' + value.getDate()).slice(-2));
   return format;
 };
 
@@ -74,8 +75,9 @@ const setDate = (datetime) => {
  */
 const setTime = (datetime) => {
   let format = 'hh:mm';
-  format = format.replace(/hh/, ('0' + datetime.getHours()).slice(-2));
-  format = format.replace(/mm/, ('0' + datetime.getMinutes()).slice(-2));
+  const value = typeof(datetime) === 'string' ? new Date(datetime) : datetime;
+  format = format.replace(/hh/, ('0' + value.getHours()).slice(-2));
+  format = format.replace(/mm/, ('0' + value.getMinutes()).slice(-2));
   return format;
 };
 

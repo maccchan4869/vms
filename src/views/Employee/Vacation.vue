@@ -160,6 +160,9 @@ export default {
       const firstDay = new Date(this.selectedYear, 3, 1);
       const finalDay = new Date(this.selectedYear + 1, 3, 1);
       const vacationList = this.$store.getters.getVacation;
+      vacationList.forEach(e => {
+        e.startDatetime = typeof(e.startDatetime) === 'string' ? new Date(e.startDatetime) : e.startDatetime;
+      });
       this.vacation = vacationList.filter(value => 
         value.startDatetime.getTime() >= firstDay.getTime() && value.startDatetime.getTime() < finalDay.getTime());
       this.sortVacation();
