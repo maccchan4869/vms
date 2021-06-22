@@ -2,20 +2,23 @@ import { createStore } from 'vuex'
 import firebase from 'firebase'
 import definition from '@/helper/definition'
 import mail from '@/helper/mail'
+import createPersistedState from 'vuex-persistedstate'
+
+const initState = {
+  loginUser: {
+    uid: '',
+    staffName: '',
+    admin: false
+  },
+  vacation: [],
+  expenses: [],
+  staffs: [],
+  mailingList: [],
+  imageUrl: ''
+}
 
 export default createStore({
-  state: {
-    loginUser: {
-      uid: '',
-      staffName: '',
-      admin: false
-    },
-    vacation: [],
-    expenses: [],
-    staffs: [],
-    mailingList: [],
-    imageUrl: ''
-  },
+  state: initState,
   mutations: {
     commitLoginUser(state, val) {
       state.loginUser = val;
@@ -514,5 +517,6 @@ export default createStore({
     getMailingList: state => {
       return state.mailingList;
     }
-  }
+  },
+  plugins: [createPersistedState({storage: window.sessionStorage})]
 })
