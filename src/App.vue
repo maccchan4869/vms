@@ -1,8 +1,4 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
   <router-view/>
 </template>
 
@@ -11,20 +7,129 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  font-size: 20px;
+}
+
+/* =============================================
+HTML要素
+============================================= */
+ul {
+  list-style: none;
+}
+
+input[type="date"], 
+input[type="time"] { 
+  margin: 5px; 
+}
+
+input[type="button"] { 
+  width: 100px;
+  cursor: pointer;
+}
+
+.resultArea thead, .resultArea tbody {
+  display: block;
+}
+
+.resultArea tbody {
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+
+.resultArea tbody td {
+  height: 60px;
+}
+
+/* =============================================
+共通クラス
+============================================= */
+.common-padding {
+  margin-top: 1rem;
+  padding: 0 10rem;
+}
+
+.cellTitle {
+  width: 180px;
   text-align: center;
-  color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+.errorMessage {
+  color: red;
+  line-height: 20px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.width-8 {
+  width: 8rem;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.width-12 {
+  width: 12rem;
+}
+
+.width-20 {
+  width: 20rem;
+}
+
+.btn-light {
+  width: 130px !important;
+}
+
+.common-header {
+  height: 100%;
+}
+
+.btn-icon {
+  background-image: url('assets/close.svg');
+  background-color: white;
+  background-repeat: no-repeat;
+  width: 30px !important;
+  height: 30px;
+	border: none;
+	outline: none;
+  cursor: pointer;
+}
+
+/* =============================================
+モーダル共通クラス
+============================================= */
+.modalOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modalOverlay .modalWindow {
+  min-width: 800px;
+  max-width: 800px;
+  height: 400px;
+  font-size: 20px;
+  border-radius: 4px;
+  background: #fff;
+  position: relative;
+  padding-top: 1%;
+}
+
+.modalOverlay .modalWindow .btn {
+  margin: 0 2rem;
+}
+
+.modalOverlay .modalWindow-medium {
+  height: 250px !important;
+  min-width: 600px !important;
+  max-width: 600px !important;
+}
+
+.modalOverlay .modalWindow-small {
+  height: 220px !important;
+  min-width: 400px !important;
+  max-width: 400px !important;
 }
 </style>
