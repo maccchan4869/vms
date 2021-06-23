@@ -501,6 +501,7 @@ export default createStore({
       commit('commitLoginUser', initialState.loginUser);
       commit('commitVacation', initialState.vacation);
       commit('commitExpenses', initialState.expenses);
+      commit('commitStaffs', initialState.staffs);
       commit('commitMailingList', initialState.mailingList);
       commit('commitImageUrl', initialState.imageUrl);
     },
